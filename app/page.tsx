@@ -51,7 +51,7 @@ function ServicesPreview({ setActiveView }: { setActiveView: (v: string) => void
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gold/10 border border-gold/20 text-gold-dark text-sm font-bold tracking-wider uppercase mb-6">
             <span className="w-2 h-2 rounded-full bg-gold animate-pulse"></span>
-            🌍 Global Immigration Solutions
+            Global Immigration Solutions
           </div>
           <h2 className="font-serif text-4xl lg:text-5xl font-bold text-navy mb-6">
             Your Global Journey <span className="text-gold">Starts Here</span>
