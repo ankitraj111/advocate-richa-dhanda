@@ -82,7 +82,7 @@ export default function EnhancedContactForm() {
               Schedule Your Consultation
             </h2>
             <p className="text-muted mt-4 leading-relaxed">
-              Take the first step toward resolving your legal matter. I'm here to
+              Take the first step toward resolving your legal matter. I&apos;m here to
               listen, advise, and represent your interests with dedication and
               expertise.
             </p>

@@ -24,10 +24,10 @@ export default function CTABanner() {
           <h3 className="font-serif text-3xl lg:text-4xl font-semibold text-white mb-6 max-w-4xl mx-auto leading-tight">
             Not sure where your case stands?
             <br />
-            <span className="text-gold-soft">Let's talk it through.</span>
+            <span className="text-gold-soft">Let&apos;s talk it through.</span>
           </h3>
           <p className="text-white/80 text-lg max-w-2xl mx-auto leading-relaxed">
-            Share your situation briefly and I'll provide an honest assessment of whether — 
+            Share your situation briefly and I&apos;ll provide an honest assessment of whether — 
             and how — I can help you achieve the best possible outcome.
           </p>
         </div>

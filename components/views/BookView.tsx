@@ -115,7 +115,7 @@ export default function BookView() {
         <div className="max-w-7xl mx-auto px-5 lg:px-8">
           <div className="chip text-gold-soft">Book a Consultation</div>
           <h1 className="font-serif text-4xl lg:text-5xl font-semibold text-white mt-3 max-w-3xl">
-            Let's find a time that works for you
+            Let&apos;s find a time that works for you
           </h1>
           <div className="gold-line w-24 mt-6" />
           <p className="text-white/70 mt-5 max-w-2xl">
@@ -406,7 +406,7 @@ export default function BookView() {
 
               {success && (
                 <div className="mt-4 p-4 rounded-lg bg-cream-2 border border-gold/40 text-navy text-sm">
-                  ✓ Appointment request received. I'll confirm your slot by phone
+                  ✓ Appointment request received. I&apos;ll confirm your slot by phone
                   or email within one business day.
                 </div>
               )}
@@ -429,7 +429,7 @@ export default function BookView() {
                 </li>
                 <li className="flex gap-3">
                   <span className="text-gold">◆</span> A clear next-step plan in
-                  writing, if you'd like to proceed.
+                  writing, if you&apos;d like to proceed.
                 </li>
                 <li className="flex gap-3">
                   <span className="text-gold">◆</span> Zero pressure — the decision
@@ -452,7 +452,7 @@ export default function BookView() {
               <div>
                 <div className="font-semibold text-navy">Prefer WhatsApp?</div>
                 <div className="text-sm text-muted">
-                  Send a pre-filled message and I'll reply directly.
+                  Send a pre-filled message and I&apos;ll reply directly.
                 </div>
               </div>
             </a>

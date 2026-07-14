@@ -56,7 +56,7 @@ export default function DemoPage() {
         <div className="max-w-7xl mx-auto px-5 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="font-serif text-3xl lg:text-4xl font-semibold text-navy">
-              What's New?
+              What&apos;s New?
             </h2>
             <p className="text-muted mt-4 max-w-2xl mx-auto">
               Every enhancement is designed to improve user experience and accessibility

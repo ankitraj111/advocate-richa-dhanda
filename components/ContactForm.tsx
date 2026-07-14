@@ -73,7 +73,7 @@ export default function ContactForm() {
         </h2>
         <div className="gold-line w-24 mt-5" />
         <p className="text-muted mt-5 max-w-md">
-          Share a few details and I'll personally review your situation and
+          Share a few details and I&apos;ll personally review your situation and
           respond within one business day. Everything you share is strictly
           confidential.
         </p>
@@ -288,7 +288,7 @@ export default function ContactForm() {
 
         {success && (
           <div className="mt-4 p-4 rounded-lg bg-cream-2 border border-gold/40 text-navy text-sm">
-            ✓ Thank you. Your message has been received — I'll respond within
+            ✓ Thank you. Your message has been received — I&apos;ll respond within
             one business day.
           </div>
         )}

@@ -80,7 +80,7 @@ export default function EnhancedFAQ() {
             Common Immigration Questions Answered
           </h2>
           <p className="text-muted mt-4 max-w-2xl mx-auto">
-            Find quick answers to common legal questions. Can't find what you're
+            Find quick answers to common legal questions. Can&apos;t find what you&apos;re
             looking for? Contact me for personalized assistance.
           </p>
         </div>

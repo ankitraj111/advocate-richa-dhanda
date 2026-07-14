@@ -125,7 +125,7 @@ export default function Testimonials() {
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold to-gold-soft">About My Services</span>
           </h2>
           <p className="text-gray-600 max-w-xl mx-auto text-lg">
-            Real feedback from clients whose global immigration journeys I've proudly supported.
+            Real feedback from clients whose global immigration journeys I&apos;ve proudly supported.
           </p>
         </div>
       </div>
