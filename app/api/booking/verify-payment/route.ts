@@ -26,14 +26,18 @@ export async function POST(request: Request) {
     }
 
     // Save booking to Firebase
-    const bookingRef = await addDoc(collection(db, "bookings"), {
-      ...bookingDetails,
-      paymentId: razorpay_payment_id,
-      orderId: razorpay_order_id,
-      amount: 499,
-      status: "confirmed",
-      createdAt: serverTimestamp(),
-    });
+    let bookingId = "pending";
+    if (db) {
+      const bookingRef = await addDoc(collection(db, "bookings"), {
+        ...bookingDetails,
+        paymentId: razorpay_payment_id,
+        orderId: razorpay_order_id,
+        amount: 499,
+        status: "confirmed",
+        createdAt: serverTimestamp(),
+      });
+      bookingId = bookingRef.id;
+    }
 
     // Create Google Calendar event
     let calendarEventId = null;

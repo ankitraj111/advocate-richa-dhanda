@@ -25,17 +25,21 @@ export function getAuthUrl() {
 
 // Store refresh token in Firebase
 export async function storeRefreshToken(token: string) {
-  await setDoc(doc(db, "settings", "google_calendar"), {
-    refreshToken: token,
-    updatedAt: new Date().toISOString(),
-  });
+  if (db) {
+    await setDoc(doc(db, "settings", "google_calendar"), {
+      refreshToken: token,
+      updatedAt: new Date().toISOString(),
+    });
+  }
 }
 
 // Get refresh token from Firebase
 export async function getRefreshToken(): Promise<string | null> {
-  const docSnap = await getDoc(doc(db, "settings", "google_calendar"));
-  if (docSnap.exists()) {
-    return docSnap.data().refreshToken;
+  if (db) {
+    const docSnap = await getDoc(doc(db, "settings", "google_calendar"));
+    if (docSnap.exists()) {
+      return docSnap.data().refreshToken;
+    }
   }
   return null;
 }

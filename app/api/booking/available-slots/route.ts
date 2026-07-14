@@ -24,10 +24,13 @@ export async function GET(request: Request) {
     const calendarSlots = await getAvailableSlots(dateStr);
 
     // Also check Firebase for already-booked slots
-    const bookingsRef = collection(db, "bookings");
-    const q = query(bookingsRef, where("date", "==", dateStr), where("status", "==", "confirmed"));
-    const snapshot = await getDocs(q);
-    const bookedTimes = snapshot.docs.map((doc) => doc.data().time);
+    let bookedTimes: string[] = [];
+    if (db) {
+      const bookingsRef = collection(db, "bookings");
+      const q = query(bookingsRef, where("date", "==", dateStr), where("status", "==", "confirmed"));
+      const snapshot = await getDocs(q);
+      bookedTimes = snapshot.docs.map((doc) => doc.data().time);
+    }
 
     // Mark booked slots as unavailable
     const slots = calendarSlots.map((slot) => ({
