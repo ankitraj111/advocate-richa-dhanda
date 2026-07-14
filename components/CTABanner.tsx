@@ -33,7 +33,10 @@ export default function CTABanner() {
         </div>
 
         <div className="flex flex-col lg:flex-row items-center justify-center gap-6">
-          <button className="group btn-gold inline-flex items-center gap-3 px-8 py-4 rounded-full font-semibold text-navy shadow-xl hover:shadow-2xl hover:shadow-gold/25 transition-all duration-300 hover:scale-105 cursor-pointer text-center relative overflow-hidden">
+          <button 
+            onClick={() => window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${waMsg}`, "_blank")}
+            className="group btn-gold inline-flex items-center gap-3 px-8 py-4 rounded-full font-semibold text-navy shadow-xl hover:shadow-2xl hover:shadow-gold/25 transition-all duration-300 hover:scale-105 cursor-pointer text-center relative overflow-hidden"
+          >
             <div className="absolute inset-0 bg-gradient-to-r from-gold via-gold-soft to-gold animate-pulse opacity-20"></div>
             <svg className="w-5 h-5 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
