@@ -34,7 +34,7 @@ export default function Header({ activeView, setActiveView }: HeaderProps) {
             onClick={() => handleNavClick("home")}
             className="flex items-center gap-3 group"
           >
-            <div className="w-11 h-11 rounded-full bg-[#d4af37] flex items-center justify-center font-bold font-serif text-lg text-black">
+            <div className="w-11 h-11 rounded-full border-2 border-[#d4af37] bg-transparent flex items-center justify-center font-bold font-serif text-lg text-white">
               RD
             </div>
             <div className="leading-tight">
