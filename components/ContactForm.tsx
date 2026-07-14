@@ -151,7 +151,7 @@ export default function ContactForm() {
                 Office
               </div>
               <div className="font-semibold text-navy">
-                H No 1057, Sector 4, Kurukshetra
+                H No 1057, Sector 4 (Kurukshetra, Haryana)
               </div>
             </div>
           </div>
