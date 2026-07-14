@@ -50,7 +50,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       success: true,
-      bookingId: bookingRef.id,
+      bookingId,
       calendarEventId,
       message: "Booking confirmed successfully!",
     });
