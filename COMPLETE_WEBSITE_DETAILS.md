@@ -1,11 +1,12 @@
-# 📋 COMPLETE WEBSITE DETAILS - ADVOCATE RICHA
+# 📋 COMPLETE WEBSITE DETAILS - ADVOCATE RICHA - EXPERT IMMIGRATION LAWYER
 
 ## 🌐 **WEBSITE OVERVIEW**
-- **Website Type:** Professional Legal Services Website
-- **Built For:** Advocate Richa (Bar Council Reg. PH/1260/2025)
+- **Website Type:** Professional Immigration Law Website
+- **Built For:** Advocate Richa (Bar Council Reg. PH/1260/2025) - Expert Immigration Lawyer
 - **Location:** Kurukshetra, Haryana
-- **Specialization:** Civil, Criminal, Family, Property Law
-- **Live URL:** http://localhost:3000
+- **Specialization:** Immigration Law, Visa Applications, Permanent Residency, Citizenship
+- **Secondary Services:** Civil, Criminal, Family, Property Law
+- **Live URL:** http://localhost:3001
 - **Status:** ✅ **LIVE & RUNNING**
 
 ---
@@ -409,11 +410,11 @@ website/
 ## 📊 **SEO OPTIMIZATION**
 
 ### Meta Information:
-- **Title:** "Advocate Richa — Professional Legal Services | Kurukshetra"
-- **Description:** Comprehensive legal services with LL.M expertise
-- **Keywords:** Civil law, criminal law, family law, property disputes
+- **Title:** "Advocate Richa — Expert Immigration Lawyer | Kurukshetra"
+- **Description:** Expert immigration legal services with LL.M expertise
+- **Keywords:** Immigration lawyer, visa applications, PR, citizenship, Kurukshetra immigration lawyer
 - **Open Graph:** Social media optimization
-- **Local SEO:** Kurukshetra location optimization
+- **Local SEO:** Kurukshetra immigration lawyer optimization
 
 ### Content Structure:
 - Semantic HTML5 structure

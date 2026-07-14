@@ -25,21 +25,21 @@ function ServicesPreview({ setActiveView }: { setActiveView: (v: string) => void
     {
       icon: "https://images.pexels.com/photos/3184287/pexels-photo-3184287.jpeg?auto=compress&cs=tinysrgb&w=200",
       title: "Work & Business Visas",
-      description: "Strategic guidance for professionals, entrepreneurs, and investors seeking international work and business opportunities.",
+      description: "Expert immigration guidance for professionals, entrepreneurs, and investors seeking international work and business opportunities with dedicated legal support.",
       features: ["Skilled Worker Visas", "Investor Programs", "Corporate Immigration"],
       gradient: "from-gold/90 via-gold-soft/90 to-platinum/90",
     },
     {
       icon: "https://images.pexels.com/photos/1438081/pexels-photo-1438081.jpeg?auto=compress&cs=tinysrgb&w=200",
-      title: "Student Visas",
-      description: "Expert assistance for students aiming to study abroad, ensuring smooth processing of study permits and admissions.",
+      title: "Student & Education Visas",
+      description: "Comprehensive immigration assistance for students aiming to study abroad, ensuring smooth processing of study permits and admissions with expert legal guidance.",
       features: ["Study Permits", "Post-Graduation Work", "Dependant Visas"],
       gradient: "from-maroon/90 via-gold/80 to-gold-soft/90",
     },
     {
       icon: "https://images.pexels.com/photos/7292911/pexels-photo-7292911.jpeg?auto=compress&cs=tinysrgb&w=200",
-      title: "PR & Citizenship",
-      description: "Comprehensive support for Permanent Residency applications, family sponsorship, and citizenship pathways.",
+      title: "Permanent Residency & Citizenship",
+      description: "Expert immigration legal support for Permanent Residency applications, family sponsorship, and citizenship pathways with comprehensive documentation assistance.",
       features: ["Permanent Residency", "Family Sponsorship", "Citizenship Applications"],
       gradient: "from-navy/90 via-gold/80 to-platinum/90",
     },
@@ -55,10 +55,10 @@ function ServicesPreview({ setActiveView }: { setActiveView: (v: string) => void
             Global Immigration Solutions
           </div>
           <h2 className="font-serif text-4xl lg:text-5xl font-bold text-navy mb-6">
-            Your Global Journey <span className="text-gold">Starts Here</span>
+            Expert Immigration Law <span className="text-gold">Solutions</span>
           </h2>
           <p className="text-navy-light max-w-3xl mx-auto text-lg leading-relaxed">
-            From securing work permits to achieving permanent residency, we provide expert immigration representation with a personal touch that prioritizes your international goals.
+            From securing work permits to achieving permanent residency, Advocate Richa Dhanda provides expert immigration legal representation with a personal touch that prioritizes your international goals.
           </p>
         </div>
 

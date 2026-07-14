@@ -14,13 +14,13 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Advocate Richa — Professional Legal Services | Kurukshetra",
-  description: "Advocate Richa (Bar Council Reg. PH/1260/2025) — trusted legal advocate in Kurukshetra. Civil, Criminal, Family, Property law with LL.M expertise and personalized attention.",
-  keywords: "advocate Kurukshetra, legal services, civil law, criminal law, family law, property disputes, Bar Council registered lawyer, LL.M advocate, Richa Dhanda",
+  title: "Advocate Richa — Expert Immigration Lawyer | Kurukshetra",
+  description: "Advocate Richa (Bar Council Reg. PH/1260/2025) — Expert Immigration Lawyer in Kurukshetra. Visa applications, PR, citizenship with LL.M expertise and personalized legal solutions.",
+  keywords: "immigration lawyer Kurukshetra, expert immigration advocate, visa lawyer, PR application, citizenship lawyer, immigration law expert, Bar Council registered immigration lawyer, LL.M immigration advocate, Richa Dhanda",
   authors: [{ name: "Advocate Richa" }],
   openGraph: {
-    title: "Advocate Richa — Professional Legal Services",
-    description: "Expert legal representation with compassion and precision. LL.M qualified advocate serving Kurukshetra with comprehensive legal solutions.",
+    title: "Advocate Richa — Expert Immigration Lawyer",
+    description: "Expert immigration legal representation with compassion and precision. LL.M qualified immigration advocate serving Kurukshetra with comprehensive immigration solutions.",
     type: "website",
     url: "https://advocatericha.com",
   },
