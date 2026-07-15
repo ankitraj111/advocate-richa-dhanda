@@ -130,8 +130,8 @@ export default function Home() {
             <EnhancedContactForm />
           </>
         )}
-        {activeView === "about" && <AboutView />}
-        {activeView === "services" && <ServicesView />}
+        {activeView === "about" && <AboutView setActiveView={setActiveView} />}
+        {activeView === "services" && <ServicesView setActiveView={setActiveView} />}
         {activeView === "blog" && <BlogView />}
         {activeView === "faq" && <FAQView />}
         {activeView === "contact" && <ContactView />}
