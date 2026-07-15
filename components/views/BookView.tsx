@@ -54,26 +54,51 @@ export default function BookView() {
   const [bookingConfirmed, setBookingConfirmed] = useState(false);
   const [bookingId, setBookingId] = useState("");
   const [paymentError, setPaymentError] = useState("");
+  const [currentMonth, setCurrentMonth] = useState(() => {
+    const d = new Date();
+    d.setDate(1);
+    return d;
+  });
 
   const WHATSAPP_NUMBER = "919254067300";
-
-  // Get minimum date (tomorrow)
-  const getMinDate = () => {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    return tomorrow.toISOString().split("T")[0];
-  };
-
-  // Get maximum date (30 days from now)
-  const getMaxDate = () => {
-    const maxDate = new Date();
-    maxDate.setDate(maxDate.getDate() + 30);
-    return maxDate.toISOString().split("T")[0];
-  };
 
   // Check if date is a Sunday
   const isSunday = (dateStr: string) => {
     return new Date(dateStr).getDay() === 0;
+  };
+
+  const nextMonth = () => {
+    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1));
+  };
+
+  const prevMonth = () => {
+    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1));
+  };
+
+  const generateCalendarDays = () => {
+    const year = currentMonth.getFullYear();
+    const month = currentMonth.getMonth();
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    
+    const days = [];
+    for (let i = 0; i < firstDay; i++) {
+      days.push(null);
+    }
+    for (let i = 1; i <= daysInMonth; i++) {
+      days.push(new Date(year, month, i));
+    }
+    return days;
+  };
+
+  // Check if a date is selectable (tomorrow to 30 days from now, and not Sunday)
+  const isDateSelectable = (date: Date) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const maxDate = new Date(today);
+    maxDate.setDate(today.getDate() + 30);
+    
+    return date > today && date <= maxDate && date.getDay() !== 0;
   };
 
   // Fetch available slots when date changes
@@ -423,14 +448,62 @@ export default function BookView() {
               </p>
 
               <div className="space-y-4">
-                <input
-                  type="date"
-                  min={getMinDate()}
-                  max={getMaxDate()}
-                  value={selectedDate}
-                  onChange={(e) => handleDateSelect(e.target.value)}
-                  className="w-full px-4 py-4 rounded-xl border-2 border-[#e5e0d8] focus:border-[#d4af37] focus:ring-2 focus:ring-[#d4af37]/20 outline-none text-[#111827] text-lg font-medium bg-[#faf8f5] transition-all cursor-pointer"
-                />
+                {/* Custom Inline Calendar */}
+                <div className="bg-[#faf8f5] rounded-xl border border-[#e5e0d8] overflow-hidden">
+                  <div className="flex items-center justify-between px-6 py-4 border-b border-[#e5e0d8] bg-white">
+                    <button 
+                      onClick={prevMonth}
+                      className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-600"
+                    >
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 18l-6-6 6-6"/></svg>
+                    </button>
+                    <div className="font-semibold text-lg text-gray-800">
+                      {currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' })}
+                    </div>
+                    <button 
+                      onClick={nextMonth}
+                      className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-600"
+                    >
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>
+                    </button>
+                  </div>
+                  
+                  <div className="p-4">
+                    <div className="grid grid-cols-7 gap-1 mb-2">
+                      {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                        <div key={day} className="text-center text-sm font-medium text-gray-500 py-1">
+                          {day}
+                        </div>
+                      ))}
+                    </div>
+                    <div className="grid grid-cols-7 gap-1">
+                      {generateCalendarDays().map((date, i) => {
+                        if (!date) return <div key={`empty-${i}`} className="p-2" />;
+                        
+                        const isSelectable = isDateSelectable(date);
+                        const dateStr = date.toISOString().split("T")[0];
+                        const isSelected = selectedDate === dateStr;
+                        const isToday = new Date().toDateString() === date.toDateString();
+                        
+                        return (
+                          <button
+                            key={i}
+                            disabled={!isSelectable}
+                            onClick={() => handleDateSelect(dateStr)}
+                            className={`
+                              h-10 w-full rounded-lg text-sm font-medium transition-all flex items-center justify-center
+                              ${!isSelectable ? 'text-gray-300 cursor-not-allowed bg-transparent' : 'hover:bg-gray-100 text-gray-700 cursor-pointer'}
+                              ${isSelected ? '!bg-[#d4af37] !text-black shadow-md' : ''}
+                              ${isToday && !isSelected ? 'border border-[#d4af37] text-[#d4af37]' : ''}
+                            `}
+                          >
+                            {date.getDate()}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
 
                 {selectedDate && isSunday(selectedDate) && (
                   <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3">
