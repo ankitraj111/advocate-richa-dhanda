@@ -144,37 +144,6 @@ export default function EnhancedContactForm() {
                   </a>
                 </div>
               </div>
-
-              <div className="flex items-start gap-4 group cursor-default">
-                <div className="w-12 h-12 bg-navy/5 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-navy/10 transition-colors duration-250">
-                  <svg
-                    className="w-5 h-5 text-navy"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                  </svg>
-                </div>
-                <div>
-                  <div className="font-semibold text-navy">Office</div>
-                  <p className="text-muted">
-                    VUNE2732, Compass Building,<br />AL Hutaita Industrial Zone-FZ,<br />Ras Al Khaimah, UAE
-                  </p>
-                </div>
-              </div>
             </div>
 
             {/* Consultation Info */}

@@ -137,23 +137,8 @@ export default function Footer({ setActiveView }: FooterProps) {
           </div>
 
           <div>
-            <h4 className="font-serif text-white text-lg mb-4">Office</h4>
+            <h4 className="font-serif text-white text-lg mb-4">Contact</h4>
             <ul className="space-y-3 text-sm">
-              <li className="flex gap-3">
-                <svg
-                  className="shrink-0 mt-0.5 text-gold"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                  <circle cx="12" cy="10" r="3" />
-                </svg>
-                <span>VUNE2732, Compass Building,<br />AL Hutaita Industrial Zone-FZ,<br />Ras Al Khaimah, UAE</span>
-              </li>
               <li className="flex gap-3">
                 <svg
                   className="shrink-0 text-gold"
