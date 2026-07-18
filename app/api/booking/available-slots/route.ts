@@ -2,8 +2,23 @@ import { NextResponse } from "next/server";
 import { getAvailableSlots, BUSINESS_HOURS } from "@/lib/google-calendar";
 import { db } from "@/lib/firebase";
 import { collection, getDocs, query, where } from "firebase/firestore";
+import { rateLimit } from "@/lib/rate-limit";
 
 export async function GET(request: Request) {
+  // Rate Limiting — max 30 requests per IP per minute
+  const ip =
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    request.headers.get("x-real-ip") ||
+    "unknown";
+
+  const rateLimitResult = rateLimit(ip, 30, 60 * 1000);
+  if (!rateLimitResult.allowed) {
+    return NextResponse.json(
+      { error: `Too many requests. Try again in ${rateLimitResult.retryAfterSeconds} seconds.` },
+      { status: 429 }
+    );
+  }
+
   const { searchParams } = new URL(request.url);
   const dateStr = searchParams.get("date");
 
