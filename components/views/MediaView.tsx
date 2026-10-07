@@ -135,18 +135,16 @@ export default function MediaView({ setActiveView }: MediaViewProps) {
           </div>
 
           {/* BUSINESS OUTREACH — ENTREPRENEUR OF THE YEAR 2026 HERO BANNER */}
-          <div className="mb-10 rounded-2xl overflow-hidden border border-amber-200 shadow-lg bg-gradient-to-r from-[#1a0a00] via-[#2d1200] to-[#1a0a00] flex flex-col md:flex-row">
-            <div className="relative w-full md:w-64 shrink-0" style={{ minHeight: "260px" }}>
+          <div className="mb-10 rounded-2xl overflow-hidden border border-amber-500/30 shadow-xl bg-gradient-to-r from-[#140800] via-[#220d00] to-[#140800] flex flex-col md:flex-row items-stretch">
+            <div className="relative w-full md:w-80 shrink-0 bg-black/40 flex items-center justify-center p-4 md:p-6 border-b md:border-b-0 md:border-r border-amber-500/20">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="https://www.businessoutreach.in/wp-content/uploads/2026/09/Entrepreneur-of-the-Year-2026-3.jpg"
+                src="/images/entrepreneur_2026.jpg"
                 alt="Entrepreneur of the Year 2026 – Business Outreach Magazine"
-                className="w-full h-full object-cover object-top"
-                style={{ minHeight: "260px" }}
+                className="w-full max-h-[340px] md:max-h-[380px] object-contain rounded-lg shadow-md"
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#1a0a00]/60 hidden md:block" />
             </div>
-            <div className="flex flex-col justify-center p-7 md:p-10 gap-4">
+            <div className="flex flex-col justify-center p-7 md:p-10 gap-4 flex-1">
               <div className="flex flex-wrap items-center gap-3">
                 <span className="bg-[#D4AF37] text-[#1a0a00] text-[11px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow">
                   🏆 Award Feature

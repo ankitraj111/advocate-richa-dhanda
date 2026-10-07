@@ -32,7 +32,7 @@ export default function BlogView() {
       excerpt:
         "In a landmark recognition of her decade-long crusade to bring transparency, accountability, and legal integrity to India's immigration sector, Advocate Richa Dhanda has been featured as 'Entrepreneur of the Year 2026' by Business Outreach — one of India's most respected business publications. This honour celebrates not just professional excellence, but a mission that has protected thousands of Indian families from fraudulent immigration agents.",
       date: "7 Oct 2026",
-      img: "https://www.businessoutreach.in/wp-content/uploads/2026/09/Entrepreneur-of-the-Year-2026-3.jpg",
+      img: "/images/entrepreneur_2026.jpg",
       link: "https://www.businessoutreach.in/magazine/entrepreneur-of-the-year-2026/?digitalversion=true",
     },
     {
@@ -215,22 +215,20 @@ export default function BlogView() {
               href={featuredPost.link}
               target="_blank"
               rel="noopener noreferrer"
-              className="group mb-10 flex flex-col md:flex-row rounded-2xl overflow-hidden border border-amber-200 shadow-lg hover:shadow-2xl transition-all duration-300 bg-gradient-to-br from-[#1a0a00] via-[#2d1200] to-[#1a0a00]"
+              className="group mb-10 flex flex-col md:flex-row rounded-2xl overflow-hidden border border-amber-500/30 shadow-xl hover:shadow-2xl transition-all duration-300 bg-gradient-to-br from-[#140800] via-[#220d00] to-[#140800] items-stretch"
             >
               {/* Cover Image */}
-              <div className="relative w-full md:w-80 shrink-0 overflow-hidden" style={{ minHeight: "280px" }}>
+              <div className="relative w-full md:w-80 shrink-0 bg-black/40 flex items-center justify-center p-4 md:p-6 border-b md:border-b-0 md:border-r border-amber-500/20">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={featuredPost.img}
                   alt={featuredPost.title}
-                  className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700"
-                  style={{ minHeight: "280px" }}
+                  className="w-full max-h-[340px] md:max-h-[380px] object-contain rounded-lg shadow-md group-hover:scale-105 transition-transform duration-500"
                 />
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-[#1a0a00]/70 hidden md:block" />
               </div>
 
               {/* Content */}
-              <div className="flex flex-col justify-center p-8 md:p-10 gap-5">
+              <div className="flex flex-col justify-center p-8 md:p-10 gap-5 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="bg-[#D4AF37] text-[#1a0a00] text-[11px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow">
                     🏆 Featured Story
