@@ -31,7 +31,7 @@ export default function BlogView() {
       title: "Dr. Richa Dhanda Featured in Business Outreach Magazine: 'Entrepreneur of the Year 2026'",
       excerpt:
         "Business Outreach Magazine has honoured Advocate Dr. Richa Dhanda under 'Editor's Choice' for 'Entrepreneur of the Year 2026'. The feature highlights her role in leading the international law sector, guiding students and professionals towards global career growth, and spearheading legal advocacy against work permit fraud.",
-      date: "7 Oct 2026",
+      date: "22 Sep 2026",
       img: "/images/richa_business_outreach.png",
       link: "https://www.businessoutreach.in/magazine/entrepreneur-of-the-year-2026/?digitalversion=true",
     },
