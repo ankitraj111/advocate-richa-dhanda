@@ -244,7 +244,7 @@ export default function BlogView() {
                 </p>
 
                 <div className="flex flex-wrap gap-4 items-center pt-2 border-t border-white/10">
-                  <span className="inline-flex items-center gap-2 bg-[#D4AF37] text-[#1a0a00] font-black text-xs uppercase tracking-wider px-6 py-3 rounded-xl shadow-md group-hover:scale-105 transition-transform">
+                  <span className="inline-flex items-center gap-2 bg-[#1A56DB] hover:bg-[#1648c0] text-white font-black text-xs uppercase tracking-wider px-6 py-3 rounded-xl shadow-md group-hover:scale-105 transition-transform">
                     Read Full Feature →
                   </span>
                   <span className="text-amber-300/60 text-xs font-medium">

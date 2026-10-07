@@ -170,7 +170,7 @@ export default function MediaView({ setActiveView }: MediaViewProps) {
                   href="https://www.businessoutreach.in/magazine/entrepreneur-of-the-year-2026/?digitalversion=true"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 bg-[#D4AF37] hover:bg-yellow-400 text-[#140800] font-black text-xs uppercase tracking-wider px-6 py-3 rounded-xl transition shadow-md hover:scale-105"
+                  className="inline-flex items-center gap-2 bg-[#1A56DB] hover:bg-[#1648c0] text-white font-black text-xs uppercase tracking-wider px-6 py-3 rounded-xl transition shadow-md hover:scale-105"
                 >
                   Read Digital Magazine →
                 </a>
