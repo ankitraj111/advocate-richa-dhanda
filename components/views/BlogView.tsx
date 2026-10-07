@@ -28,11 +28,11 @@ export default function BlogView() {
   const blogPosts: BlogPost[] = [
     {
       cat: "Awards & Recognition",
-      title: "Advocate Richa Dhanda Named 'Entrepreneur of the Year 2026' by Business Outreach Magazine",
+      title: "Dr. Richa Dhanda Featured in Business Outreach Magazine: 'Entrepreneur of the Year 2026'",
       excerpt:
-        "In a landmark recognition of her decade-long crusade to bring transparency, accountability, and legal integrity to India's immigration sector, Advocate Richa Dhanda has been featured as 'Entrepreneur of the Year 2026' by Business Outreach — one of India's most respected business publications. This honour celebrates not just professional excellence, but a mission that has protected thousands of Indian families from fraudulent immigration agents.",
+        "Business Outreach Magazine has honoured Advocate Dr. Richa Dhanda under 'Editor's Choice' for 'Entrepreneur of the Year 2026'. The feature highlights her role in leading the international law sector, guiding students and professionals towards global career growth, and spearheading legal advocacy against work permit fraud.",
       date: "7 Oct 2026",
-      img: "/images/entrepreneur_2026.jpg",
+      img: "/images/richa_business_outreach.png",
       link: "https://www.businessoutreach.in/magazine/entrepreneur-of-the-year-2026/?digitalversion=true",
     },
     {

@@ -135,47 +135,47 @@ export default function MediaView({ setActiveView }: MediaViewProps) {
           </div>
 
           {/* BUSINESS OUTREACH — ENTREPRENEUR OF THE YEAR 2026 HERO BANNER */}
-          <div className="mb-10 rounded-2xl overflow-hidden border border-amber-500/30 shadow-xl bg-gradient-to-r from-[#140800] via-[#220d00] to-[#140800] flex flex-col md:flex-row items-stretch">
-            <div className="relative w-full md:w-80 shrink-0 bg-black/40 flex items-center justify-center p-4 md:p-6 border-b md:border-b-0 md:border-r border-amber-500/20">
+          <div className="mb-10 rounded-2xl overflow-hidden border border-amber-500/30 shadow-xl bg-gradient-to-r from-[#140800] via-[#220d00] to-[#140800] flex flex-col lg:flex-row items-stretch">
+            <div className="relative w-full lg:w-[420px] shrink-0 bg-black/50 flex items-center justify-center p-4 sm:p-6 border-b lg:border-b-0 lg:border-r border-amber-500/20">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/images/entrepreneur_2026.jpg"
-                alt="Entrepreneur of the Year 2026 – Business Outreach Magazine"
-                className="w-full max-h-[340px] md:max-h-[380px] object-contain rounded-lg shadow-md"
+                src="/images/richa_business_outreach.png"
+                alt="Dr. Richa Dhanda - Entrepreneur of the Year 2026 - Business Outreach Magazine"
+                className="w-full max-h-[380px] sm:max-h-[440px] object-contain rounded-lg shadow-lg border border-white/10"
               />
             </div>
-            <div className="flex flex-col justify-center p-7 md:p-10 gap-4 flex-1">
-              <div className="flex flex-wrap items-center gap-3">
-                <span className="bg-[#D4AF37] text-[#1a0a00] text-[11px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow">
-                  🏆 Award Feature
+            <div className="flex flex-col justify-center p-7 sm:p-10 gap-4 flex-1">
+              <div className="flex flex-wrap items-center gap-2.5">
+                <span className="bg-[#D4AF37] text-[#140800] text-[11px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow">
+                  🏆 Editor&apos;s Choice
                 </span>
                 <span className="bg-white/10 text-amber-200 text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full border border-amber-400/40">
                   Business Outreach Magazine
                 </span>
-                <span className="text-amber-300/70 text-[11px] font-semibold">September 2026</span>
+                <span className="text-amber-300/80 text-[11px] font-semibold">Sept 2026 Edition</span>
               </div>
-              <h3 className="font-serif text-2xl md:text-3xl font-extrabold text-white leading-tight">
-                Entrepreneur of the Year{" "}
-                <span className="text-[#D4AF37]">2026</span>
-              </h3>
-              <p className="text-amber-100/80 text-sm leading-relaxed max-w-xl">
-                Advocate Richa Dhanda has been featured in the prestigious{" "}
-                <strong className="text-white">Business Outreach Magazine</strong> as part of
-                the <em>Entrepreneur of the Year 2026</em> edition — recognising her outstanding
-                contributions to immigration law and her relentless fight against fraudulent
-                immigration practices in India.
+              <div>
+                <span className="text-[#D4AF37] text-xs font-bold uppercase tracking-widest block mb-1">
+                  Entrepreneur of the Year 2026
+                </span>
+                <h3 className="font-serif text-2xl sm:text-3xl font-extrabold text-white leading-tight">
+                  Dr. Richa Dhanda: <span className="text-amber-200">Leading the International Law Sector</span>
+                </h3>
+              </div>
+              <p className="text-amber-100/85 text-sm leading-relaxed max-w-2xl">
+                Featured prominently in <strong>Business Outreach Magazine</strong> (Sept 2026), Advocate Dr. Richa Dhanda is recognized under <em>Editor&apos;s Choice</em> for guiding students and professionals towards global career growth, while leading the fight against fraudulent work permit schemes across India.
               </p>
-              <div className="flex flex-wrap gap-3 mt-1">
+              <div className="flex flex-wrap gap-3 mt-2">
                 <a
                   href="https://www.businessoutreach.in/magazine/entrepreneur-of-the-year-2026/?digitalversion=true"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 bg-[#D4AF37] hover:bg-yellow-400 text-[#1a0a00] font-black text-xs uppercase tracking-wider px-6 py-3 rounded-xl transition shadow-md hover:scale-105"
+                  className="inline-flex items-center gap-2 bg-[#D4AF37] hover:bg-yellow-400 text-[#140800] font-black text-xs uppercase tracking-wider px-6 py-3 rounded-xl transition shadow-md hover:scale-105"
                 >
-                  Read Full Feature →
+                  Read Digital Magazine →
                 </a>
-                <span className="inline-flex items-center gap-2 text-amber-200/70 text-xs font-medium px-4 py-3">
-                  📖 Digital Edition Available
+                <span className="inline-flex items-center gap-2 text-amber-200/80 text-xs font-medium px-4 py-3">
+                  📖 Official Cover Story Feature
                 </span>
               </div>
             </div>
