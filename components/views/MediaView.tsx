@@ -130,8 +130,57 @@ export default function MediaView({ setActiveView }: MediaViewProps) {
               </h2>
             </div>
             <span className="text-xs font-semibold text-gray-500 hidden sm:block">
-              August 2024 Coverage
+              2024 – 2026 Coverage
             </span>
+          </div>
+
+          {/* BUSINESS OUTREACH — ENTREPRENEUR OF THE YEAR 2026 HERO BANNER */}
+          <div className="mb-10 rounded-2xl overflow-hidden border border-amber-200 shadow-lg bg-gradient-to-r from-[#1a0a00] via-[#2d1200] to-[#1a0a00] flex flex-col md:flex-row">
+            <div className="relative w-full md:w-64 shrink-0" style={{ minHeight: "260px" }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="https://www.businessoutreach.in/wp-content/uploads/2026/09/Entrepreneur-of-the-Year-2026-3.jpg"
+                alt="Entrepreneur of the Year 2026 – Business Outreach Magazine"
+                className="w-full h-full object-cover object-top"
+                style={{ minHeight: "260px" }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#1a0a00]/60 hidden md:block" />
+            </div>
+            <div className="flex flex-col justify-center p-7 md:p-10 gap-4">
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="bg-[#D4AF37] text-[#1a0a00] text-[11px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow">
+                  🏆 Award Feature
+                </span>
+                <span className="bg-white/10 text-amber-200 text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full border border-amber-400/40">
+                  Business Outreach Magazine
+                </span>
+                <span className="text-amber-300/70 text-[11px] font-semibold">September 2026</span>
+              </div>
+              <h3 className="font-serif text-2xl md:text-3xl font-extrabold text-white leading-tight">
+                Entrepreneur of the Year{" "}
+                <span className="text-[#D4AF37]">2026</span>
+              </h3>
+              <p className="text-amber-100/80 text-sm leading-relaxed max-w-xl">
+                Advocate Richa Dhanda has been featured in the prestigious{" "}
+                <strong className="text-white">Business Outreach Magazine</strong> as part of
+                the <em>Entrepreneur of the Year 2026</em> edition — recognising her outstanding
+                contributions to immigration law and her relentless fight against fraudulent
+                immigration practices in India.
+              </p>
+              <div className="flex flex-wrap gap-3 mt-1">
+                <a
+                  href="https://www.businessoutreach.in/magazine/entrepreneur-of-the-year-2026/?digitalversion=true"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 bg-[#D4AF37] hover:bg-yellow-400 text-[#1a0a00] font-black text-xs uppercase tracking-wider px-6 py-3 rounded-xl transition shadow-md hover:scale-105"
+                >
+                  Read Full Feature →
+                </a>
+                <span className="inline-flex items-center gap-2 text-amber-200/70 text-xs font-medium px-4 py-3">
+                  📖 Digital Edition Available
+                </span>
+              </div>
+            </div>
           </div>
 
           <div className="grid lg:grid-cols-3 gap-8 mb-14">

@@ -8,6 +8,7 @@ interface MediaTickerProps {
 
 export default function MediaTicker({ setActiveView }: MediaTickerProps) {
   const logos = [
+    "Business Outreach",
     "Outlook India",
     "Google News",
     "Yahoo! News",

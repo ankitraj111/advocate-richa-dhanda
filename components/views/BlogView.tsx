@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 
 interface BlogPost {
   cat: string;
@@ -18,6 +17,7 @@ export default function BlogView() {
 
   const categories = [
     "All",
+    "Awards & Recognition",
     "Work Visas",
     "Student Visas",
     "PR Updates",
@@ -26,6 +26,15 @@ export default function BlogView() {
   ];
 
   const blogPosts: BlogPost[] = [
+    {
+      cat: "Awards & Recognition",
+      title: "Advocate Richa Dhanda Named 'Entrepreneur of the Year 2026' by Business Outreach Magazine",
+      excerpt:
+        "In a landmark recognition of her decade-long crusade to bring transparency, accountability, and legal integrity to India's immigration sector, Advocate Richa Dhanda has been featured as 'Entrepreneur of the Year 2026' by Business Outreach — one of India's most respected business publications. This honour celebrates not just professional excellence, but a mission that has protected thousands of Indian families from fraudulent immigration agents.",
+      date: "7 Oct 2026",
+      img: "https://www.businessoutreach.in/wp-content/uploads/2026/09/Entrepreneur-of-the-Year-2026-3.jpg",
+      link: "https://www.businessoutreach.in/magazine/entrepreneur-of-the-year-2026/?digitalversion=true",
+    },
     {
       cat: "Immigration Policy",
       title: "Canada Immigration Updates 2025: What You Need to Know",
@@ -119,9 +128,12 @@ export default function BlogView() {
     return catMatch && searchMatch;
   });
 
+  const featuredPost = filteredPosts.length > 0 ? filteredPosts[0] : null;
+  const restPosts = filteredPosts.slice(1);
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#FAF9F5] via-[#FFFFFF] to-[#F1F3F5] text-slate-900">
-      
+
       {/* Header Banner */}
       <section className="relative pt-16 pb-20 lg:pt-24 lg:pb-24 border-b border-gray-200">
         <div className="w-full px-5 lg:px-8 max-w-7xl mx-auto text-center">
@@ -130,7 +142,8 @@ export default function BlogView() {
           </span>
 
           <h1 className="font-serif text-4xl lg:text-6xl font-bold text-[#0B1426] mb-6 leading-tight max-w-4xl mx-auto">
-            Latest Insights On <span className="text-[#8B1538]">Global Immigration &amp; Visas</span>
+            Latest Insights On{" "}
+            <span className="text-[#8B1538]">Global Immigration &amp; Visas</span>
           </h1>
 
           <p className="text-slate-600 text-lg lg:text-xl max-w-3xl mx-auto leading-relaxed">
@@ -142,7 +155,7 @@ export default function BlogView() {
       {/* Main Content Section */}
       <section className="py-16 lg:py-24">
         <div className="w-full px-5 lg:px-8 max-w-7xl mx-auto">
-          
+
           {/* Categories & Search Bar */}
           <div className="flex flex-col md:flex-row gap-6 md:items-center justify-between mb-12">
             <div className="flex flex-wrap items-center gap-2">
@@ -183,20 +196,75 @@ export default function BlogView() {
             </div>
           </div>
 
-          {/* Grid or Empty State */}
-          {filteredPosts.length === 0 ? (
+          {/* Empty State */}
+          {filteredPosts.length === 0 && (
             <div className="bg-white rounded-2xl p-12 text-center border border-gray-200 shadow-sm max-w-md mx-auto my-8">
               <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-4 text-slate-400">
                 🔍
               </div>
               <h3 className="font-serif text-lg font-bold text-slate-800 mb-2">No Articles Found</h3>
               <p className="text-slate-500 text-sm">
-                No legal updates match &quot;{searchQuery}&quot;. Try searching another keyword or category.
+                No articles match &quot;{searchQuery}&quot;. Try another keyword or category.
               </p>
             </div>
-          ) : (
+          )}
+
+          {/* Featured Hero Post */}
+          {featuredPost && (
+            <a
+              href={featuredPost.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group mb-10 flex flex-col md:flex-row rounded-2xl overflow-hidden border border-amber-200 shadow-lg hover:shadow-2xl transition-all duration-300 bg-gradient-to-br from-[#1a0a00] via-[#2d1200] to-[#1a0a00]"
+            >
+              {/* Cover Image */}
+              <div className="relative w-full md:w-80 shrink-0 overflow-hidden" style={{ minHeight: "280px" }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={featuredPost.img}
+                  alt={featuredPost.title}
+                  className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700"
+                  style={{ minHeight: "280px" }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-[#1a0a00]/70 hidden md:block" />
+              </div>
+
+              {/* Content */}
+              <div className="flex flex-col justify-center p-8 md:p-10 gap-5">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="bg-[#D4AF37] text-[#1a0a00] text-[11px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow">
+                    🏆 Featured Story
+                  </span>
+                  <span className="bg-white/10 border border-amber-300/40 text-amber-200 text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">
+                    {featuredPost.cat}
+                  </span>
+                  <span className="text-amber-400/60 text-xs font-semibold">{featuredPost.date}</span>
+                </div>
+
+                <h2 className="font-serif text-2xl md:text-3xl font-extrabold text-white leading-tight group-hover:text-[#D4AF37] transition-colors duration-300">
+                  {featuredPost.title}
+                </h2>
+
+                <p className="text-amber-100/75 text-sm leading-relaxed max-w-2xl">
+                  {featuredPost.excerpt}
+                </p>
+
+                <div className="flex flex-wrap gap-4 items-center pt-2 border-t border-white/10">
+                  <span className="inline-flex items-center gap-2 bg-[#D4AF37] text-[#1a0a00] font-black text-xs uppercase tracking-wider px-6 py-3 rounded-xl shadow-md group-hover:scale-105 transition-transform">
+                    Read Full Feature →
+                  </span>
+                  <span className="text-amber-300/60 text-xs font-medium">
+                    📖 Business Outreach Magazine · Digital Edition
+                  </span>
+                </div>
+              </div>
+            </a>
+          )}
+
+          {/* Rest of Posts Grid */}
+          {restPosts.length > 0 && (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredPosts.map((post, i) => (
+              {restPosts.map((post, i) => (
                 <a
                   key={i}
                   href={post.link}
@@ -206,7 +274,6 @@ export default function BlogView() {
                 >
                   <article>
                     <div className="relative h-52 w-full overflow-hidden bg-slate-200">
-                      {/* Standard IMG tag with fallback styling so it never breaks */}
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={post.img}
@@ -221,17 +288,11 @@ export default function BlogView() {
                     </div>
 
                     <div className="p-7">
-                      <div className="text-xs font-semibold text-slate-400 mb-2">
-                        {post.date}
-                      </div>
-
+                      <div className="text-xs font-semibold text-slate-400 mb-2">{post.date}</div>
                       <h3 className="font-serif text-xl font-bold text-slate-900 mb-3 group-hover:text-[#8B1538] transition-colors leading-snug">
                         {post.title}
                       </h3>
-
-                      <p className="text-slate-600 text-sm leading-relaxed">
-                        {post.excerpt}
-                      </p>
+                      <p className="text-slate-600 text-sm leading-relaxed">{post.excerpt}</p>
                     </div>
                   </article>
 
@@ -244,9 +305,9 @@ export default function BlogView() {
               ))}
             </div>
           )}
+
         </div>
       </section>
-
     </div>
   );
 }
