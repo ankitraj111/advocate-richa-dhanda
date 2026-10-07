@@ -230,13 +230,9 @@ export default function BlogView() {
               {/* Content */}
               <div className="flex flex-col justify-center p-8 md:p-10 gap-5 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="bg-[#D4AF37] text-[#1a0a00] text-[11px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow">
-                    🏆 Featured Story
-                  </span>
-                  <span className="bg-white/10 border border-amber-300/40 text-amber-200 text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">
+                  <span className="bg-[#D4AF37] text-[#1a0a00] text-[11px] font-black uppercase tracking-widest px-3.5 py-1.5 rounded-full shadow">
                     {featuredPost.cat}
                   </span>
-                  <span className="text-amber-400/60 text-xs font-semibold">{featuredPost.date}</span>
                 </div>
 
                 <h2 className="font-serif text-2xl md:text-3xl font-extrabold text-white leading-tight group-hover:text-[#D4AF37] transition-colors duration-300">
