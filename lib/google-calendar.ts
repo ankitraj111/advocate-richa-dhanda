@@ -33,12 +33,33 @@ export async function storeRefreshToken(token: string) {
   }
 }
 
-// Get refresh token from Firebase
+let cachedRefreshToken: string | null = null;
+let tokenCacheTime = 0;
+
+// Get refresh token from Firebase with in-memory caching & timeout
 export async function getRefreshToken(): Promise<string | null> {
+  const now = Date.now();
+  // 5-minute memory cache
+  if (cachedRefreshToken !== null && now - tokenCacheTime < 5 * 60 * 1000) {
+    return cachedRefreshToken;
+  }
+
   if (db) {
-    const docSnap = await getDoc(doc(db, "settings", "google_calendar"));
-    if (docSnap.exists()) {
-      return docSnap.data().refreshToken;
+    try {
+      const fetchPromise = getDoc(doc(db, "settings", "google_calendar")).then((docSnap) => {
+        if (docSnap.exists()) {
+          return (docSnap.data().refreshToken as string) || null;
+        }
+        return null;
+      });
+      // 1.5s timeout to prevent hanging on Firestore network delay
+      const timeoutPromise = new Promise<null>((resolve) => setTimeout(() => resolve(null), 1500));
+      const token = await Promise.race([fetchPromise, timeoutPromise]);
+      cachedRefreshToken = token;
+      tokenCacheTime = now;
+      return token;
+    } catch {
+      return null;
     }
   }
   return null;

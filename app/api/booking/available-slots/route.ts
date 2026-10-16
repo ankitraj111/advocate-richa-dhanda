@@ -6,14 +6,17 @@ import { rateLimit } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
+// Fast in-memory cache for available slots (TTL: 30 seconds)
+const slotsCache = new Map<string, { slots: any[]; expiresAt: number }>();
+
 export async function GET(request: Request) {
-  // Rate Limiting — max 30 requests per IP per minute
+  // Rate Limiting — max 60 requests per IP per minute
   const ip =
     request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
     request.headers.get("x-real-ip") ||
     "unknown";
 
-  const rateLimitResult = rateLimit(ip, 30, 60 * 1000);
+  const rateLimitResult = rateLimit(ip, 60, 60 * 1000);
   if (!rateLimitResult.allowed) {
     return NextResponse.json(
       { error: `Too many requests. Try again in ${rateLimitResult.retryAfterSeconds} seconds.` },
@@ -34,21 +37,41 @@ export async function GET(request: Request) {
 
   // Check if it's a business day
   if (!BUSINESS_HOURS[dayOfWeek]) {
-    return NextResponse.json({ slots: [], message: "Office is closed on this day" });
+    return NextResponse.json(
+      { slots: [], message: "Office is closed on this day" },
+      { headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" } }
+    );
+  }
+
+  // Check in-memory cache for instant response (1-5ms)
+  const cached = slotsCache.get(dateStr);
+  if (cached && Date.now() < cached.expiresAt) {
+    return NextResponse.json(
+      { slots: cached.slots },
+      { headers: { "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60" } }
+    );
   }
 
   try {
-    // Get slots from Google Calendar
-    const calendarSlots = await getAvailableSlots(dateStr);
-
-    // Also check Firebase for already-booked slots
-    let bookedTimes: string[] = [];
-    if (db) {
-      const bookingsRef = collection(db, "bookings");
-      const q = query(bookingsRef, where("date", "==", dateStr), where("status", "==", "confirmed"));
-      const snapshot = await getDocs(q);
-      bookedTimes = snapshot.docs.map((doc) => doc.data().time);
-    }
+    // Run Google Calendar slots and Firestore bookings check in PARALLEL with timeouts
+    const [calendarSlots, bookedTimes] = await Promise.all([
+      getAvailableSlots(dateStr),
+      (async (): Promise<string[]> => {
+        if (!db) return [];
+        try {
+          const timeoutPromise = new Promise<string[]>((resolve) => setTimeout(() => resolve([]), 1500));
+          const fetchPromise = (async () => {
+            const bookingsRef = collection(db, "bookings");
+            const q = query(bookingsRef, where("date", "==", dateStr), where("status", "==", "confirmed"));
+            const snapshot = await getDocs(q);
+            return snapshot.docs.map((doc) => doc.data().time as string);
+          })();
+          return await Promise.race([fetchPromise, timeoutPromise]);
+        } catch {
+          return [];
+        }
+      })(),
+    ]);
 
     // Mark booked slots as unavailable
     const slots = calendarSlots.map((slot) => ({
@@ -56,7 +79,13 @@ export async function GET(request: Request) {
       available: slot.available && !bookedTimes.includes(slot.time),
     }));
 
-    return NextResponse.json({ slots });
+    // Cache the result for 30 seconds
+    slotsCache.set(dateStr, { slots, expiresAt: Date.now() + 30 * 1000 });
+
+    return NextResponse.json(
+      { slots },
+      { headers: { "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60" } }
+    );
   } catch (error) {
     console.error("Error fetching slots:", error);
     return NextResponse.json({ error: "Failed to fetch available slots" }, { status: 500 });

@@ -217,57 +217,65 @@ export default function BookView() {
     return true;
   };
 
+  // Helper to generate slots synchronously for instant UI rendering (0ms delay)
+  const getDefaultSlotsForDate = (dateStr: string): SlotData[] => {
+    if (isSunday(dateStr)) return [];
+    const [sy, sm, sd] = dateStr.split("-").map(Number);
+    const day = new Date(sy, sm - 1, sd).getDay();
+    const endHour = day === 6 ? 14 : 18;
+    const now = new Date();
+    const isToday = now.getFullYear() === sy && now.getMonth() === sm - 1 && now.getDate() === sd;
+    const result: SlotData[] = [];
+    for (let h = 10; h < endHour; h++) {
+      for (let m = 0; m < 60; m += 30) {
+        const dh = h > 12 ? h - 12 : h;
+        const slotDateTime = new Date(sy, sm - 1, sd, h, m, 0);
+        const isPast = isToday && slotDateTime.getTime() <= now.getTime() + 15 * 60 * 1000;
+        result.push({
+          time: `${dh}:${m.toString().padStart(2, "0")} ${h >= 12 ? "PM" : "AM"}`,
+          available: !isPast,
+        });
+      }
+    }
+    return result;
+  };
+
   useEffect(() => {
     if (!selectedDate) return;
     if (isSunday(selectedDate)) { setSlots([]); return; }
-    setLoadingSlots(true); setSelectedSlot("");
 
     const now = new Date();
     const [sy, sm, sd] = selectedDate.split("-").map(Number);
     const isToday = now.getFullYear() === sy && now.getMonth() === sm - 1 && now.getDate() === sd;
 
+    // Fast background sync to update with any confirmed bookings without freezing the screen
     fetch(`/api/booking/available-slots?date=${selectedDate}`)
       .then((r) => r.json())
       .then((data) => {
-        let fetchedSlots: SlotData[] = data.slots || [];
-        // Real-time client-side safety filter for today: disable any slot that has already passed
-        if (isToday) {
-          fetchedSlots = fetchedSlots.map((s) => {
-            const timeParts = s.time.match(/(\d+):(\d+)\s*(AM|PM)/i);
-            if (!timeParts) return s;
-            let h = parseInt(timeParts[1]);
-            const m = parseInt(timeParts[2]);
-            const ampm = timeParts[3].toUpperCase();
-            if (ampm === "PM" && h !== 12) h += 12;
-            if (ampm === "AM" && h === 12) h = 0;
-            const slotDateTime = new Date(sy, sm - 1, sd, h, m, 0);
-            const isPast = slotDateTime.getTime() <= now.getTime() + 15 * 60 * 1000;
-            return {
-              ...s,
-              available: s.available && !isPast,
-            };
-          });
-        }
-        setSlots(fetchedSlots);
-        setLoadingSlots(false);
-      })
-      .catch(() => {
-        const day = new Date(sy, sm - 1, sd).getDay();
-        const endHour = day === 6 ? 14 : 18;
-        const fb: SlotData[] = [];
-        for (let h = 10; h < endHour; h++) {
-          for (let m = 0; m < 60; m += 30) {
-            const dh = h > 12 ? h - 12 : h;
-            const slotDateTime = new Date(sy, sm - 1, sd, h, m, 0);
-            const isPast = isToday && slotDateTime.getTime() <= now.getTime() + 15 * 60 * 1000;
-            fb.push({
-              time: `${dh}:${m.toString().padStart(2, "0")} ${h >= 12 ? "PM" : "AM"}`,
-              available: !isPast,
+        if (data.slots && Array.isArray(data.slots) && data.slots.length > 0) {
+          let fetchedSlots: SlotData[] = data.slots;
+          if (isToday) {
+            fetchedSlots = fetchedSlots.map((s) => {
+              const timeParts = s.time.match(/(\d+):(\d+)\s*(AM|PM)/i);
+              if (!timeParts) return s;
+              let h = parseInt(timeParts[1]);
+              const m = parseInt(timeParts[2]);
+              const ampm = timeParts[3].toUpperCase();
+              if (ampm === "PM" && h !== 12) h += 12;
+              if (ampm === "AM" && h === 12) h = 0;
+              const slotDateTime = new Date(sy, sm - 1, sd, h, m, 0);
+              const isPast = slotDateTime.getTime() <= now.getTime() + 15 * 60 * 1000;
+              return {
+                ...s,
+                available: s.available && !isPast,
+              };
             });
           }
+          setSlots(fetchedSlots);
         }
-        setSlots(fb);
-        setLoadingSlots(false);
+      })
+      .catch(() => {
+        // Instant fallback already displayed
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate]);
@@ -284,7 +292,16 @@ export default function BookView() {
     if (errors[name]) setErrors((p) => ({ ...p, [name]: false }));
   };
 
-  const handleDateSelect = (dateStr: string) => { if (isSunday(dateStr)) return; setSelectedDate(dateStr); setStep(2); };
+  const handleDateSelect = (dateStr: string) => {
+    if (isSunday(dateStr)) return;
+    setSelectedDate(dateStr);
+    // Render slots immediately (0ms instant display)
+    const instantSlots = getDefaultSlotsForDate(dateStr);
+    setSlots(instantSlots);
+    setLoadingSlots(false);
+    setSelectedSlot("");
+    setStep(2);
+  };
   const handleSlotSelect = (time: string) => { setSelectedSlot(time); setStep(3); };
 
   const handleFormSubmit = async (e: FormEvent) => {
