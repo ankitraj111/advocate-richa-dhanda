@@ -66,28 +66,28 @@ export default function EnhancedContactForm() {
   };
 
   return (
-    <section className="py-16 lg:py-24 bg-white" id="contact">
-      <div className="max-w-7xl mx-auto px-5 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-12 items-start">
+    <section className="py-12 sm:py-16 lg:py-24 bg-white" id="contact">
+      <div className="max-w-7xl mx-auto px-4 sm:px-5 lg:px-8">
+        <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-start">
           {/* Left Column - Info */}
           <div className="animate-fade-in">
-            <Badge variant="outline" className="mb-4">
+            <Badge variant="outline" className="mb-3 sm:mb-4">
               Get in Touch
             </Badge>
-            <h2 className="font-serif text-3xl lg:text-4xl font-semibold text-navy">
+            <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-semibold text-navy">
               Schedule Your Consultation
             </h2>
-            <p className="text-muted mt-4 leading-relaxed">
+            <p className="text-muted mt-3 sm:mt-4 text-sm sm:text-base leading-relaxed">
               Take the first step toward resolving your legal matter. I&apos;m here to
               listen, advise, and represent your interests with dedication and
               expertise.
             </p>
 
             {/* Contact Details */}
-            <div className="mt-10 space-y-6">
+            <div className="mt-6 sm:mt-10 space-y-4 sm:space-y-6">
 
               <div className="flex items-start gap-4 group cursor-default">
-                <div className="w-12 h-12 bg-navy/5 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-navy/10 transition-colors duration-250">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-navy/5 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-navy/10 transition-colors duration-250">
                   <svg
                     className="w-5 h-5 text-navy"
                     fill="none"
@@ -104,10 +104,10 @@ export default function EnhancedContactForm() {
                   </svg>
                 </div>
                 <div>
-                  <div className="font-semibold text-navy">Email</div>
+                  <div className="text-xs sm:text-sm font-semibold text-navy">Email</div>
                   <a
                     href="mailto:Advocatericha29@gmail.com"
-                    className="text-muted hover:text-gold transition-colors duration-250 focus:outline-none focus:underline break-all"
+                    className="text-muted text-sm sm:text-base hover:text-gold transition-colors duration-250 focus:outline-none focus:underline break-all"
                   >
                     Advocatericha29@gmail.com
                   </a>
@@ -118,8 +118,8 @@ export default function EnhancedContactForm() {
           </div>
 
           {/* Right Column - Form */}
-          <div className="bg-cream rounded-3xl p-8 lg:p-10 border border-cream-2 shadow-lg animate-slide-up">
-            <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="bg-cream rounded-2xl sm:rounded-3xl p-5 sm:p-8 lg:p-10 border border-cream-2 shadow-lg animate-slide-up">
+            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
               {/* Name */}
               <div>
                 <Label htmlFor="name" className="text-navy font-medium">

@@ -102,35 +102,35 @@ export default function ServicesView({ setActiveView }: ServicesViewProps = {}) 
     <div className="min-h-screen bg-gradient-to-b from-[#FAF9F5] via-[#FFFFFF] to-[#F1F3F5] text-slate-900">
       
       {/* Hero Header Section */}
-      <section className="relative pt-16 pb-20 lg:pt-24 lg:pb-24 border-b border-gray-200">
-        <div className="w-full px-5 lg:px-8 max-w-7xl mx-auto text-center">
-          <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-amber-100/90 border border-amber-300 text-amber-900 text-xs font-bold uppercase tracking-wider mb-6 shadow-xs">
+      <section className="relative pt-12 pb-14 lg:pt-24 lg:pb-24 border-b border-gray-200">
+        <div className="w-full px-4 sm:px-5 lg:px-8 max-w-7xl mx-auto text-center">
+          <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-amber-100/90 border border-amber-300 text-amber-900 text-xs font-bold uppercase tracking-wider mb-5 sm:mb-6 shadow-xs">
             Professional Legal Services
           </span>
 
-          <h1 className="font-serif text-4xl lg:text-6xl font-bold text-[#0B1426] mb-6 leading-tight max-w-4xl mx-auto">
+          <h1 className="font-serif text-3xl sm:text-4xl lg:text-6xl font-bold text-[#0B1426] mb-5 sm:mb-6 leading-tight max-w-4xl mx-auto">
             Trusted Legal Solutions For Your <span className="text-[#8B1538]">Global Visas &amp; Immigration</span>
           </h1>
 
-          <p className="text-slate-600 text-lg lg:text-xl max-w-3xl mx-auto leading-relaxed">
+          <p className="text-slate-600 text-base sm:text-lg lg:text-xl max-w-3xl mx-auto leading-relaxed">
             From initial strategy to final visa grant — Advocate Richa Dhanda provides high-trust, legal representation tailored to your unique goals.
           </p>
         </div>
       </section>
 
       {/* Services Grid Section */}
-      <section className="py-16 lg:py-24">
-        <div className="w-full px-5 lg:px-8 max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="font-serif text-3xl lg:text-4xl font-bold text-[#0B1426] mb-3">
+      <section className="py-10 sm:py-16 lg:py-24">
+        <div className="w-full px-4 sm:px-5 lg:px-8 max-w-7xl mx-auto">
+          <div className="text-center mb-10 sm:mb-16">
+            <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-[#0B1426] mb-3">
               Explore Our Practice Areas
             </h2>
-            <p className="text-slate-600 max-w-2xl mx-auto">
+            <p className="text-slate-600 max-w-2xl mx-auto text-sm sm:text-base">
               Select a service below to book a direct consultation with Advocate Richa Dhanda.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8">
             {services.map((s, i) => (
               <div
                 key={i}
@@ -187,27 +187,27 @@ export default function ServicesView({ setActiveView }: ServicesViewProps = {}) 
       </section>
 
       {/* The 4-Step Process */}
-      <section className="py-16 lg:py-24 bg-white border-t border-b border-gray-200">
-        <div className="w-full px-5 lg:px-8 max-w-7xl mx-auto">
-          <div className="text-center max-w-3xl mx-auto mb-16">
+      <section className="py-10 sm:py-16 lg:py-24 bg-white border-t border-b border-gray-200">
+        <div className="w-full px-4 sm:px-5 lg:px-8 max-w-7xl mx-auto">
+          <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-16">
             <span className="text-[#8B1538] font-bold text-xs uppercase tracking-widest block mb-2">
               Transparent &amp; Simple Process
             </span>
-            <h2 className="font-serif text-3xl lg:text-4xl font-bold text-[#0B1426] mb-4">
+            <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-[#0B1426] mb-4">
               How We Work With You
             </h2>
-            <p className="text-slate-600 text-base">
+            <p className="text-slate-600 text-sm sm:text-base">
               A step-by-step legal roadmap built to give you 100% clarity at every stage.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-8">
             {process.map((p, i) => (
-              <div key={i} className="bg-[#FAF9F5] rounded-2xl p-6 border border-amber-200/80 relative shadow-xs">
+              <div key={i} className="bg-[#FAF9F5] rounded-2xl p-5 sm:p-6 border border-amber-200/80 relative shadow-xs">
                 <div className="text-3xl font-extrabold text-[#D4AF37] font-serif mb-4">
                   {p.num}
                 </div>
-                <h3 className="font-serif text-lg font-bold text-slate-900 mb-2">
+                <h3 className="font-serif text-base sm:text-lg font-bold text-slate-900 mb-2">
                   {p.title}
                 </h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
@@ -220,18 +220,18 @@ export default function ServicesView({ setActiveView }: ServicesViewProps = {}) 
       </section>
 
       {/* Executive Call to Action Banner */}
-      <section className="py-16 lg:py-20">
-        <div className="w-full px-5 lg:px-8 max-w-5xl mx-auto">
-          <div className="rounded-3xl bg-gradient-to-r from-[#7A1532] via-[#8B1538] to-[#0A1628] p-10 lg:p-14 text-center text-white shadow-2xl relative overflow-hidden">
-            <h3 className="font-serif text-3xl lg:text-4xl font-bold mb-4">
+      <section className="py-10 sm:py-16 lg:py-20">
+        <div className="w-full px-4 sm:px-5 lg:px-8 max-w-5xl mx-auto">
+          <div className="rounded-3xl bg-gradient-to-r from-[#7A1532] via-[#8B1538] to-[#0A1628] p-8 sm:p-10 lg:p-14 text-center text-white shadow-2xl relative overflow-hidden">
+            <h3 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold mb-4">
               Need Personalized Legal Advice?
             </h3>
-            <p className="text-white/80 text-base lg:text-lg max-w-2xl mx-auto mb-8 leading-relaxed">
+            <p className="text-white/80 text-sm sm:text-base lg:text-lg max-w-2xl mx-auto mb-7 sm:mb-8 leading-relaxed">
               Book a 1-on-1 consultation session with Advocate Richa Dhanda to discuss your specific immigration matter with complete confidentiality.
             </p>
             <button
               onClick={handleBookClick}
-              className="bg-[#D4AF37] hover:bg-[#c29f2e] text-[#0A1628] font-extrabold px-8 py-4 rounded-xl text-base transition-all duration-300 shadow-lg cursor-pointer inline-flex items-center gap-3 hover:scale-105"
+              className="bg-[#D4AF37] hover:bg-[#c29f2e] text-[#0A1628] font-extrabold px-7 sm:px-8 py-3.5 sm:py-4 rounded-xl text-sm transition-all duration-300 shadow-lg cursor-pointer inline-flex items-center gap-3 hover:scale-105"
             >
               Book Your Consultation Now
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

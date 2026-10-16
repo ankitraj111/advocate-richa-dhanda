@@ -109,17 +109,17 @@ export default function FAQView({ setActiveView }: FAQViewProps = {}) {
     <div className="min-h-screen bg-gradient-to-b from-[#FAF9F5] via-[#FFFFFF] to-[#F1F3F5] text-slate-900 pb-20">
       
       {/* Header Banner */}
-      <section className="pt-16 pb-16 lg:pt-24 lg:pb-20 border-b border-gray-200">
-        <div className="w-full px-5 lg:px-8 max-w-7xl mx-auto text-center">
+      <section className="pt-10 pb-12 sm:pt-16 sm:pb-16 lg:pt-24 lg:pb-20 border-b border-gray-200">
+        <div className="w-full px-4 sm:px-5 lg:px-8 max-w-7xl mx-auto text-center">
           <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-amber-100/90 border border-amber-300 text-amber-900 text-xs font-bold uppercase tracking-wider mb-4 shadow-xs">
             Legal Knowledge Base
           </span>
 
-          <h1 className="font-serif text-4xl lg:text-6xl font-bold text-[#0B1426] mb-4 leading-tight">
+          <h1 className="font-serif text-3xl sm:text-4xl lg:text-6xl font-bold text-[#0B1426] mb-4 leading-tight">
             Frequently Asked <span className="text-[#8B1538]">Questions</span>
           </h1>
 
-          <p className="text-slate-600 text-base lg:text-lg max-w-2xl mx-auto mb-8">
+          <p className="text-slate-600 text-sm sm:text-base lg:text-lg max-w-2xl mx-auto mb-6 sm:mb-8">
             Get instant, clear answers regarding visa legal requirements, refusal appeals, and consultation booking.
           </p>
 
@@ -130,10 +130,10 @@ export default function FAQView({ setActiveView }: FAQViewProps = {}) {
               placeholder="Search any question or keyword..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3.5 rounded-xl border border-gray-300 bg-white text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#8B1538] text-sm font-medium"
+              className="w-full pl-11 sm:pl-12 pr-4 py-3 sm:py-3.5 rounded-xl border border-gray-300 bg-white text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#8B1538] text-sm font-medium"
             />
             <svg
-              className="w-5 h-5 text-slate-400 absolute left-4 top-4"
+              className="w-5 h-5 text-slate-400 absolute left-4 top-3.5 sm:top-4"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -145,8 +145,8 @@ export default function FAQView({ setActiveView }: FAQViewProps = {}) {
       </section>
 
       {/* Main Content Area */}
-      <section className="py-12 lg:py-16">
-        <div className="w-full px-5 lg:px-8 max-w-5xl mx-auto">
+      <section className="py-10 sm:py-12 lg:py-16">
+        <div className="w-full px-4 sm:px-5 lg:px-8 max-w-5xl mx-auto">
           
           {/* Quick Help Category Cards */}
           <div className="grid md:grid-cols-3 gap-6 mb-12">
@@ -213,26 +213,26 @@ export default function FAQView({ setActiveView }: FAQViewProps = {}) {
                   >
                     <button
                       onClick={() => toggleAccordion(index)}
-                      className="w-full px-6 py-5 text-left flex items-center justify-between gap-4 cursor-pointer focus:outline-none"
+                      className="w-full px-4 sm:px-6 py-4 sm:py-5 text-left flex items-center justify-between gap-3 sm:gap-4 cursor-pointer focus:outline-none"
                     >
-                      <span className="font-serif text-lg font-bold text-slate-900 pr-2">
+                      <span className="font-serif text-base sm:text-lg font-bold text-slate-900 pr-2">
                         {faq.q}
                       </span>
                       <div
-                        className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-transform duration-300 ${
+                        className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center shrink-0 transition-transform duration-300 ${
                           isOpen
                             ? "bg-[#8B1538] text-white rotate-180"
                             : "bg-slate-100 text-slate-600"
                         }`}
                       >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
                         </svg>
                       </div>
                     </button>
 
                     {isOpen && (
-                      <div className="px-6 pb-6 pt-2 text-slate-600 text-base leading-relaxed border-t border-gray-100">
+                      <div className="px-4 sm:px-6 pb-5 sm:pb-6 pt-1 sm:pt-2 text-slate-600 text-sm sm:text-base leading-relaxed border-t border-gray-100">
                         {faq.a}
                       </div>
                     )}
@@ -240,23 +240,23 @@ export default function FAQView({ setActiveView }: FAQViewProps = {}) {
                 );
               })
             ) : (
-              <div className="text-center py-12 bg-white rounded-2xl border border-gray-200 text-slate-500">
+              <div className="text-center py-10 sm:py-12 bg-white rounded-2xl border border-gray-200 text-slate-500 text-sm">
                 No matching questions found for &quot;{searchQuery}&quot;. Please try another search term.
               </div>
             )}
           </div>
 
           {/* Bottom Direct CTA Box */}
-          <div className="rounded-3xl bg-gradient-to-r from-[#7A1532] via-[#8B1538] to-[#0A1628] p-10 text-center text-white shadow-xl">
-            <h3 className="font-serif text-3xl font-bold mb-3">
+          <div className="rounded-3xl bg-gradient-to-r from-[#7A1532] via-[#8B1538] to-[#0A1628] p-6 sm:p-10 text-center text-white shadow-xl">
+            <h3 className="font-serif text-2xl sm:text-3xl font-bold mb-3">
               Have a Specific Legal Question?
             </h3>
-            <p className="text-white/80 text-base max-w-xl mx-auto mb-6">
+            <p className="text-white/80 text-sm sm:text-base max-w-xl mx-auto mb-6">
               Get personalized legal answers directly for your visa matter in a confidential 1-on-1 session.
             </p>
             <button
               onClick={handleBookClick}
-              className="bg-[#D4AF37] hover:bg-[#c29f2e] text-[#0A1628] font-extrabold px-8 py-3 rounded-xl text-sm transition shadow-lg cursor-pointer inline-flex items-center gap-2"
+              className="bg-[#D4AF37] hover:bg-[#c29f2e] text-[#0A1628] font-extrabold px-6 sm:px-8 py-3 rounded-xl text-xs sm:text-sm transition shadow-lg cursor-pointer inline-flex items-center gap-2"
             >
               Book Your Consultation Now
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

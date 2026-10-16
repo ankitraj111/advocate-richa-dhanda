@@ -15,8 +15,12 @@ export function middleware(request: NextRequest) {
 
   // CORS Protection for API routes
   if (pathname.startsWith("/api/")) {
-    // Block requests from unauthorized origins
-    if (origin && !ALLOWED_ORIGINS.includes(origin)) {
+    // Webhook endpoints receive server-to-server calls from payment gateways
+    // (e.g. Cashfree) — these have non-browser origins and must be allowed through
+    const isWebhook = pathname.startsWith("/api/webhook/");
+
+    // Block requests from unauthorized origins (skip for webhooks)
+    if (!isWebhook && origin && !ALLOWED_ORIGINS.includes(origin)) {
       return NextResponse.json(
         { error: "Forbidden: Origin not allowed" },
         { status: 403 }

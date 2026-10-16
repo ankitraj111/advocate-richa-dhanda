@@ -35,33 +35,33 @@ export default function MediaView({ setActiveView }: MediaViewProps) {
     <div className="min-h-screen bg-[#F8F9FA] text-[#111827]">
 
       {/* CLEAN PROFESSIONAL PRESSROOM HEADER — Executive Light Theme */}
-      <div className="bg-gradient-to-b from-[#FAF9F5] via-[#FFFFFF] to-[#F1F3F5] text-slate-900 py-12 lg:py-16 border-b border-gray-200">
-        <div className="w-full px-5 lg:px-8 max-w-7xl mx-auto">
+      <div className="bg-gradient-to-b from-[#FAF9F5] via-[#FFFFFF] to-[#F1F3F5] text-slate-900 py-10 lg:py-16 border-b border-gray-200">
+        <div className="w-full px-4 sm:px-5 lg:px-8 max-w-7xl mx-auto">
           
-          <div className="flex items-center justify-end gap-4 mb-8">
+          <div className="flex items-center justify-end gap-4 mb-6 sm:mb-8">
             <span className="inline-flex items-center px-3.5 py-1 rounded-full bg-amber-100/90 border border-amber-300 text-amber-900 text-xs font-bold uppercase tracking-wider shadow-xs">
               Official Media Room
             </span>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-8 items-center">
+          <div className="grid lg:grid-cols-3 gap-6 sm:gap-8 items-start">
             <div className="lg:col-span-2">
               <span className="text-[#8B1538] text-xs font-extrabold uppercase tracking-widest block mb-2">
                 Press Releases &amp; Media Coverage
               </span>
-              <h1 className="font-serif text-3xl sm:text-5xl font-bold text-[#0B1426] mb-4 leading-tight">
-                Advocate Richa Dhanda <br />
+              <h1 className="font-serif text-2xl sm:text-4xl lg:text-5xl font-bold text-[#0B1426] mb-4 leading-tight">
+                Advocate Richa Dhanda{" "}
                 <span className="text-[#8B1538]">In National Media</span>
               </h1>
 
-              <p className="text-slate-600 text-base lg:text-lg max-w-2xl leading-relaxed mb-6 font-normal">
+              <p className="text-slate-600 text-sm sm:text-base lg:text-lg max-w-2xl leading-relaxed mb-6 font-normal">
                 Verified legal commentary, work permit scam advisories, and expert opinions published in major national news outlets including <strong className="text-slate-900 font-bold">The Tribune</strong>, <strong className="text-slate-900 font-bold">Ahmedabad Mirror</strong>, <strong className="text-slate-900 font-bold">Google News</strong>, and over 200+ media portals across India.
               </p>
 
               <div className="flex flex-wrap gap-3 items-center">
                 <a
                   href="#featured-news"
-                  className="bg-[#8B1538] text-white font-bold px-6 py-3 rounded-lg text-xs uppercase tracking-wider hover:bg-[#70102d] transition shadow-md inline-flex items-center gap-2"
+                  className="bg-[#8B1538] text-white font-bold px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg text-xs uppercase tracking-wider hover:bg-[#70102d] transition shadow-md inline-flex items-center gap-2"
                 >
                   Featured Cover Stories
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -70,7 +70,7 @@ export default function MediaView({ setActiveView }: MediaViewProps) {
                 </a>
                 <a
                   href="#search-directory"
-                  className="bg-white text-slate-800 font-bold px-6 py-3 rounded-lg text-xs uppercase tracking-wider hover:bg-slate-50 transition border border-slate-300 shadow-xs"
+                  className="bg-white text-slate-800 font-bold px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg text-xs uppercase tracking-wider hover:bg-slate-50 transition border border-slate-300 shadow-xs"
                 >
                   Search 200+ Outlets 🔍
                 </a>
@@ -78,8 +78,8 @@ export default function MediaView({ setActiveView }: MediaViewProps) {
             </div>
 
             {/* Official Advocate Profile Card */}
-            <div className="bg-white border border-gray-200 rounded-2xl p-6 flex flex-col items-center text-center shadow-lg">
-              <div className="relative w-28 h-28 rounded-full overflow-hidden border-2 border-[#D4AF37] shadow-md mb-3">
+            <div className="bg-white border border-gray-200 rounded-2xl p-5 sm:p-6 flex flex-col items-center text-center shadow-lg">
+              <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-2 border-[#D4AF37] shadow-md mb-3">
                 <Image
                   src="/images/richa_tribune.png"
                   alt="Advocate Richa Dhanda"
@@ -87,7 +87,7 @@ export default function MediaView({ setActiveView }: MediaViewProps) {
                   className="object-cover object-top"
                 />
               </div>
-              <h3 className="font-serif font-bold text-slate-900 text-lg">Advocate Richa Dhanda</h3>
+              <h3 className="font-serif font-bold text-slate-900 text-base sm:text-lg">Advocate Richa Dhanda</h3>
               <p className="text-[#8B1538] text-xs font-bold tracking-wide mt-0.5">Bar Council Reg. PH/1260/2025</p>
               <p className="text-slate-600 text-xs mt-2 leading-relaxed">
                 Expert Immigration Lawyer &amp; National Press Spokesperson.
@@ -99,11 +99,11 @@ export default function MediaView({ setActiveView }: MediaViewProps) {
 
       {/* TOP FEATURED LOGOS STRIP (NO BACKGROUND BOXES, PURE TEXT LOGOS) */}
       <div className="bg-white border-b border-gray-200 py-4 shadow-sm">
-        <div className="max-w-7xl mx-auto px-5 lg:px-8 flex flex-wrap items-center justify-between gap-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-5 lg:px-8 flex flex-wrap items-center justify-between gap-4 sm:gap-6">
           <span className="text-xs font-bold text-gray-500 uppercase tracking-widest shrink-0">
             Featured In Top Media:
           </span>
-          <div className="flex flex-wrap gap-6 items-center overflow-x-auto py-1">
+          <div className="flex flex-wrap gap-4 sm:gap-6 items-center overflow-x-auto py-1">
             <BrandLogo name="Outlook India" isDarkTheme={false} />
             <BrandLogo name="Google News" isDarkTheme={false} />
             <BrandLogo name="Yahoo! News" isDarkTheme={false} />
@@ -116,7 +116,7 @@ export default function MediaView({ setActiveView }: MediaViewProps) {
       </div>
 
       {/* MAIN CONTENT AREA */}
-      <div className="max-w-7xl mx-auto px-5 lg:px-8 py-14">
+      <div className="max-w-7xl mx-auto px-4 sm:px-5 lg:px-8 py-10 sm:py-14">
 
         {/* FEATURED LEAD COVERAGE SECTION */}
         <div id="featured-news" className="mb-16 scroll-mt-24">
@@ -135,94 +135,94 @@ export default function MediaView({ setActiveView }: MediaViewProps) {
           </div>
 
           {/* BUSINESS OUTREACH — ENTREPRENEUR OF THE YEAR 2026 HERO BANNER */}
-          <div className="mb-10 rounded-2xl overflow-hidden border border-amber-500/30 shadow-xl bg-gradient-to-r from-[#140800] via-[#220d00] to-[#140800] flex flex-col lg:flex-row items-stretch">
+          <div className="mb-8 sm:mb-10 rounded-2xl overflow-hidden border border-amber-500/30 shadow-xl bg-gradient-to-r from-[#140800] via-[#220d00] to-[#140800] flex flex-col lg:flex-row items-stretch">
             <div className="relative w-full lg:w-[420px] shrink-0 bg-black/50 flex items-center justify-center p-4 sm:p-6 border-b lg:border-b-0 lg:border-r border-amber-500/20">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/images/richa_business_outreach.png"
                 alt="Dr. Richa Dhanda - Entrepreneur of the Year 2026 - Business Outreach Magazine"
-                className="w-full max-h-[380px] sm:max-h-[440px] object-contain rounded-lg shadow-lg border border-white/10"
+                className="w-full max-h-[280px] sm:max-h-[380px] lg:max-h-[440px] object-contain rounded-lg shadow-lg border border-white/10"
               />
             </div>
-            <div className="flex flex-col justify-center p-7 sm:p-10 gap-4 flex-1">
-              <div className="flex flex-wrap items-center gap-2.5">
-                <span className="bg-[#D4AF37] text-[#140800] text-[11px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow">
+            <div className="flex flex-col justify-center p-5 sm:p-7 lg:p-10 gap-3 sm:gap-4 flex-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="bg-[#D4AF37] text-[#140800] text-[10px] sm:text-[11px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full shadow">
                   🏆 Editor&apos;s Choice
                 </span>
-                <span className="bg-white/10 text-amber-200 text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full border border-amber-400/40">
+                <span className="bg-white/10 text-amber-200 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border border-amber-400/40">
                   Business Outreach Magazine
                 </span>
-                <span className="text-amber-300/80 text-[11px] font-semibold">Sept 2026 Edition</span>
+                <span className="text-amber-300/80 text-[10px] sm:text-[11px] font-semibold">Sept 2026 Edition</span>
               </div>
               <div>
-                <span className="text-[#D4AF37] text-xs font-bold uppercase tracking-widest block mb-1">
+                <span className="text-[#D4AF37] text-[11px] sm:text-xs font-bold uppercase tracking-widest block mb-1">
                   Entrepreneur of the Year 2026
                 </span>
-                <h3 className="font-serif text-2xl sm:text-3xl font-extrabold text-white leading-tight">
+                <h3 className="font-serif text-xl sm:text-2xl lg:text-3xl font-extrabold text-white leading-tight">
                   Dr. Richa Dhanda: <span className="text-amber-200">Leading the International Law Sector</span>
                 </h3>
               </div>
-              <p className="text-amber-100/85 text-sm leading-relaxed max-w-2xl">
+              <p className="text-amber-100/85 text-xs sm:text-sm leading-relaxed max-w-2xl">
                 Featured prominently in <strong>Business Outreach Magazine</strong> (Sept 2026), Advocate Dr. Richa Dhanda is recognized under <em>Editor&apos;s Choice</em> for guiding students and professionals towards global career growth, while leading the fight against fraudulent work permit schemes across India.
               </p>
-              <div className="flex flex-wrap gap-3 mt-2">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-3 mt-1 sm:mt-2">
                 <a
                   href="https://www.businessoutreach.in/magazine/entrepreneur-of-the-year-2026/?digitalversion=true"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 bg-[#1A56DB] hover:bg-[#1648c0] text-white font-black text-xs uppercase tracking-wider px-6 py-3 rounded-xl transition shadow-md hover:scale-105"
+                  className="inline-flex items-center justify-center gap-2 bg-[#1A56DB] hover:bg-[#1648c0] text-white font-black text-xs uppercase tracking-wider px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl transition shadow-md hover:scale-105 text-center"
                 >
                   Read Digital Magazine →
                 </a>
-                <span className="inline-flex items-center gap-2 text-amber-200/80 text-xs font-medium px-4 py-3">
+                <span className="inline-flex items-center gap-1.5 text-amber-200/80 text-[11px] sm:text-xs font-medium py-1 sm:py-3">
                   📖 Official Cover Story Feature
                 </span>
               </div>
             </div>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-8 mb-14">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-10 sm:mb-14">
 
             {/* OUTLOOK INDIA SPOTLIGHT CARD */}
             <div className="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition duration-300 flex flex-col justify-between overflow-hidden">
               <div>
-                <div className="relative h-72 w-full bg-gray-100 border-b border-gray-200">
+                <div className="relative h-56 sm:h-72 w-full bg-gray-100 border-b border-gray-200">
                   <Image
                     src="/images/richa_tribune.png"
                     alt="Advocate Richa Dhanda - Outlook India Feature"
                     fill
                     className="object-cover object-top"
                   />
-                  <div className="absolute top-4 left-4 bg-[#1A56DB] px-3 py-1.5 rounded-lg shadow-md">
-                    <span className="font-sans font-black text-sm tracking-tight text-white">OUTLOOK <span className="font-semibold text-blue-200">India</span></span>
+                  <div className="absolute top-3.5 left-3.5 sm:top-4 sm:left-4 bg-[#1A56DB] px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg shadow-md">
+                    <span className="font-sans font-black text-xs sm:text-sm tracking-tight text-white">OUTLOOK <span className="font-semibold text-blue-200">India</span></span>
                   </div>
-                  <div className="absolute bottom-4 left-4 bg-black/75 text-white px-3 py-1 rounded text-xs font-medium backdrop-blur-sm">
+                  <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 bg-black/75 text-white px-2.5 sm:px-3 py-1 rounded text-[11px] sm:text-xs font-medium backdrop-blur-sm">
                     Published: 2025
                   </div>
                 </div>
 
-                <div className="p-7">
-                  <span className="text-xs font-bold text-[#1A56DB] uppercase tracking-wider block mb-2">
+                <div className="p-5 sm:p-7">
+                  <span className="text-[11px] sm:text-xs font-bold text-[#1A56DB] uppercase tracking-wider block mb-1.5 sm:mb-2">
                     Exclusive National Profile
                   </span>
-                  <h3 className="font-serif text-xl font-bold text-[#0B1426] mb-3 leading-snug hover:text-[#1A56DB] transition">
+                  <h3 className="font-serif text-lg sm:text-xl font-bold text-[#0B1426] mb-2 sm:mb-3 leading-snug hover:text-[#1A56DB] transition">
                     Advocate Richa Dhanda: The Lawyer Trying To Make India&apos;s Immigration Industry Tell The Truth
                   </h3>
-                  <p className="text-gray-600 text-sm leading-relaxed mb-5">
+                  <p className="text-gray-600 text-xs sm:text-sm leading-relaxed mb-4 sm:mb-5">
                     Outlook India profiles Advocate Richa Dhanda — a fearless legal voice fighting to bring transparency and accountability to India&apos;s immigration industry, protecting thousands of aspirants from fraudulent consultants.
                   </p>
                 </div>
               </div>
 
-              <div className="px-7 py-4 bg-gray-50 border-t border-gray-200 flex items-center justify-between">
+              <div className="px-5 sm:px-7 py-3.5 sm:py-4 bg-gray-50 border-t border-gray-200 flex items-center justify-between">
                 <span className="text-xs font-medium text-gray-500">Exclusive Profile</span>
                 <a
                   href="https://www.outlookindia.com/hub4business/advocate-richa-dhanda-the-lawyer-trying-to-make-indias-immigration-industry-tell-the-truth"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-[#1A56DB] hover:bg-[#1648c0] text-white font-bold px-5 py-2.5 rounded-lg text-xs transition inline-flex items-center gap-1.5"
+                  className="bg-[#1A56DB] hover:bg-[#1648c0] text-white font-bold px-4 sm:px-5 py-2 sm:py-2.5 rounded-lg text-xs transition inline-flex items-center gap-1.5"
                 >
-                  Read Outlook India Article →
+                  Read Article →
                 </a>
               </div>
             </div>
@@ -230,48 +230,48 @@ export default function MediaView({ setActiveView }: MediaViewProps) {
             {/* THE TRIBUNE SPOTLIGHT CARD */}
             <div className="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition duration-300 flex flex-col justify-between overflow-hidden">
               <div>
-                <div className="relative h-72 w-full bg-gray-100 border-b border-gray-200">
+                <div className="relative h-56 sm:h-72 w-full bg-gray-100 border-b border-gray-200">
                   <Image
                     src="/images/richa_tribune.png"
                     alt="Advocate Richa Dhanda - The Tribune Feature"
                     fill
                     className="object-cover object-top"
                   />
-                  <div className="absolute top-4 left-4 bg-black/80 px-3 py-1.5 rounded-lg shadow-md">
+                  <div className="absolute top-3.5 left-3.5 sm:top-4 sm:left-4 bg-black/80 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg shadow-md">
                     <BrandLogo name="The Tribune" isDarkTheme={true} />
                   </div>
-                  <div className="absolute bottom-4 left-4 bg-black/75 text-white px-3 py-1 rounded text-xs font-medium backdrop-blur-sm">
+                  <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 bg-black/75 text-white px-2.5 sm:px-3 py-1 rounded text-[11px] sm:text-xs font-medium backdrop-blur-sm">
                     Published: August 14, 2024
                   </div>
                 </div>
 
-                <div className="p-7">
-                  <span className="text-xs font-bold text-[#ef4444] uppercase tracking-wider block mb-2">
+                <div className="p-5 sm:p-7">
+                  <span className="text-[11px] sm:text-xs font-bold text-[#ef4444] uppercase tracking-wider block mb-1.5 sm:mb-2">
                     National Partner Exclusive
                   </span>
-                  <h3 className="font-serif text-2xl font-bold text-[#0B1426] mb-3 leading-snug hover:text-[#ef4444] transition">
+                  <h3 className="font-serif text-lg sm:text-2xl font-bold text-[#0B1426] mb-2 sm:mb-3 leading-snug hover:text-[#ef4444] transition">
                     Immigration Experts Highlight Fraud Risks Linked to Fake Work Permit Offers in India
                   </h3>
-                  <p className="text-gray-600 text-sm leading-relaxed mb-5">
+                  <p className="text-gray-600 text-xs sm:text-sm leading-relaxed mb-4 sm:mb-5">
                     Every week, families from small towns across Punjab, Haryana, Uttar Pradesh, Himachal Pradesh and several other states make one of the biggest financial decisions of their lives — navigating fake work permit risks with guidance from expert immigration advocates.
                   </p>
 
-                  <div className="bg-gray-50 border-l-4 border-[#ef4444] p-4 rounded-r-xl text-gray-700 text-xs italic mb-4">
+                  <div className="bg-gray-50 border-l-4 border-[#ef4444] p-3 sm:p-4 rounded-r-xl text-gray-700 text-xs italic mb-4">
                     <strong className="not-italic text-gray-900 font-bold block mb-1">Statement from Advocate Richa Dhanda:</strong>
                     &quot;Applicants must rigorously verify employer sponsor licenses and official contract letters prior to transferring retainer funds.&quot;
                   </div>
                 </div>
               </div>
 
-              <div className="px-7 py-4 bg-gray-50 border-t border-gray-200 flex items-center justify-between">
+              <div className="px-5 sm:px-7 py-3.5 sm:py-4 bg-gray-50 border-t border-gray-200 flex items-center justify-between">
                 <span className="text-xs font-medium text-gray-500">Verified Press Release</span>
                 <a
                   href="https://www.tribuneindia.com/partner-exclusives/immigration-experts-highlight-fraud-risks-linked-to-fake-work-permit-offers-in-india/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-[#ef4444] hover:bg-red-700 text-white font-bold px-5 py-2.5 rounded-lg text-xs transition inline-flex items-center gap-1.5"
+                  className="bg-[#ef4444] hover:bg-red-700 text-white font-bold px-4 sm:px-5 py-2 sm:py-2.5 rounded-lg text-xs transition inline-flex items-center gap-1.5"
                 >
-                  Read Full Tribune Article →
+                  Read Article →
                 </a>
               </div>
             </div>
@@ -279,48 +279,48 @@ export default function MediaView({ setActiveView }: MediaViewProps) {
             {/* AHMEDABAD MIRROR SPOTLIGHT CARD */}
             <div className="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition duration-300 flex flex-col justify-between overflow-hidden">
               <div>
-                <div className="relative h-72 w-full bg-gray-100 border-b border-gray-200">
+                <div className="relative h-56 sm:h-72 w-full bg-gray-100 border-b border-gray-200">
                   <Image
                     src="/images/richa_tribune.png"
                     alt="Advocate Richa Dhanda - Ahmedabad Mirror Feature"
                     fill
                     className="object-cover object-top"
                   />
-                  <div className="absolute top-4 left-4 bg-black/80 px-3 py-1.5 rounded-lg shadow-md">
+                  <div className="absolute top-3.5 left-3.5 sm:top-4 sm:left-4 bg-black/80 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg shadow-md">
                     <BrandLogo name="Ahmedabad Mirror" isDarkTheme={true} />
                   </div>
-                  <div className="absolute bottom-4 left-4 bg-black/75 text-white px-3 py-1 rounded text-xs font-medium backdrop-blur-sm">
+                  <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 bg-black/75 text-white px-2.5 sm:px-3 py-1 rounded text-[11px] sm:text-xs font-medium backdrop-blur-sm">
                     Published: August 14, 2024
                   </div>
                 </div>
 
-                <div className="p-7">
-                  <span className="text-xs font-bold text-[#f97316] uppercase tracking-wider block mb-2">
+                <div className="p-5 sm:p-7">
+                  <span className="text-[11px] sm:text-xs font-bold text-[#f97316] uppercase tracking-wider block mb-1.5 sm:mb-2">
                     National News Feature
                   </span>
-                  <h3 className="font-serif text-2xl font-bold text-[#0B1426] mb-3 leading-snug hover:text-[#f97316] transition">
+                  <h3 className="font-serif text-lg sm:text-2xl font-bold text-[#0B1426] mb-2 sm:mb-3 leading-snug hover:text-[#f97316] transition">
                     Young Indians From Small Towns Losing Savings to Fake Work Permit Offers, Warn Immigration Experts
                   </h3>
-                  <p className="text-gray-600 text-sm leading-relaxed mb-5">
+                  <p className="text-gray-600 text-xs sm:text-sm leading-relaxed mb-4 sm:mb-5">
                     Legal experts issue crucial warnings regarding fraudulent overseas employment schemes, fake job offers, and essential document verification steps for aspiring international migrants seeking global careers.
                   </p>
 
-                  <div className="bg-gray-50 border-l-4 border-[#f97316] p-4 rounded-r-xl text-gray-700 text-xs italic mb-4">
+                  <div className="bg-gray-50 border-l-4 border-[#f97316] p-3 sm:p-4 rounded-r-xl text-gray-700 text-xs italic mb-4">
                     <strong className="not-italic text-gray-900 font-bold block mb-1">Key Legal Advisory:</strong>
                     &quot;Small-town candidates are often targeted by unaccredited agents. Legal verification before payment is the best protection.&quot;
                   </div>
                 </div>
               </div>
 
-              <div className="px-7 py-4 bg-gray-50 border-t border-gray-200 flex items-center justify-between">
+              <div className="px-5 sm:px-7 py-3.5 sm:py-4 bg-gray-50 border-t border-gray-200 flex items-center justify-between">
                 <span className="text-xs font-medium text-gray-500">Verified Press Release</span>
                 <a
                   href="https://www.ahmedabadmirror.com/young-indians-from-small-towns-losing-savings-to-fake-work-permit-offers-warn-immigration-experts/81918948.html"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-[#f97316] hover:bg-orange-700 text-white font-bold px-5 py-2.5 rounded-lg text-xs transition inline-flex items-center gap-1.5"
+                  className="bg-[#f97316] hover:bg-orange-700 text-white font-bold px-4 sm:px-5 py-2 sm:py-2.5 rounded-lg text-xs transition inline-flex items-center gap-1.5"
                 >
-                  Read Full Mirror Article →
+                  Read Article →
                 </a>
               </div>
             </div>
@@ -381,9 +381,9 @@ export default function MediaView({ setActiveView }: MediaViewProps) {
           </div>
 
           {/* Search Box */}
-          <div className="relative mb-6">
+          <div className="relative mb-4 sm:mb-6">
             <svg
-              className="w-5 h-5 absolute left-4 top-3.5 text-gray-400"
+              className="w-5 h-5 absolute left-3.5 sm:left-4 top-3 sm:top-3.5 text-gray-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -394,18 +394,18 @@ export default function MediaView({ setActiveView }: MediaViewProps) {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by outlet or headline (e.g. Google, Yahoo, Tribune, Karnataka, Punjab, Work Permit...)"
-              className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#0B1426] focus:bg-white transition"
+              placeholder="Search by outlet or headline..."
+              className="w-full pl-11 sm:pl-12 pr-4 py-2.5 sm:py-3 bg-gray-50 border border-gray-200 rounded-xl text-xs sm:text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#0B1426] focus:bg-white transition"
             />
           </div>
 
           {/* Category Filters */}
-          <div className="flex flex-wrap gap-2 mb-8">
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none mb-6 sm:mb-8 -mx-4 px-4 sm:mx-0 sm:px-0">
             {categories.map((cat) => (
               <button
                 key={cat.name}
                 onClick={() => setActiveCategory(cat.name)}
-                className={`px-4 py-2 rounded-lg text-xs font-bold transition cursor-pointer ${
+                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs font-bold transition whitespace-nowrap cursor-pointer shrink-0 ${
                   activeCategory === cat.name
                     ? "bg-[#0B1426] text-white shadow-sm"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -468,9 +468,9 @@ export default function MediaView({ setActiveView }: MediaViewProps) {
         </div>
 
         {/* PRESS DESK CONTACT BOX */}
-        <div className="bg-[#0B1426] rounded-2xl p-8 lg:p-10 text-white flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
-            <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-gold shrink-0">
+        <div className="bg-[#0B1426] rounded-2xl p-6 sm:p-8 lg:p-10 text-white flex flex-col md:flex-row items-center justify-between gap-6 text-center sm:text-left">
+          <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-5">
+            <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-2 border-gold shrink-0">
               <Image
                 src="/images/richa_tribune.png"
                 alt="Advocate Richa Dhanda"
@@ -479,11 +479,11 @@ export default function MediaView({ setActiveView }: MediaViewProps) {
               />
             </div>
             <div>
-              <span className="text-gold text-xs font-bold uppercase tracking-widest block mb-1">
+              <span className="text-gold text-[10px] sm:text-xs font-bold uppercase tracking-widest block mb-1">
                 Official Media Desk
               </span>
-              <h3 className="font-serif text-2xl font-bold mb-1">Press &amp; Media Inquiries</h3>
-              <p className="text-gray-300 text-sm max-w-lg">
+              <h3 className="font-serif text-xl sm:text-2xl font-bold mb-1">Press &amp; Media Inquiries</h3>
+              <p className="text-gray-300 text-xs sm:text-sm max-w-lg">
                 Advocate Richa Dhanda is available for legal commentary, press quotes, and media interviews on immigration law.
               </p>
             </div>
@@ -491,7 +491,7 @@ export default function MediaView({ setActiveView }: MediaViewProps) {
 
           <button
             onClick={() => setActiveView("contact")}
-            className="bg-gold text-navy hover:bg-gold-soft font-bold px-7 py-3.5 rounded-xl text-xs uppercase tracking-wider transition shrink-0 shadow-md cursor-pointer"
+            className="w-full sm:w-auto bg-gold text-navy hover:bg-gold-soft font-bold px-6 sm:px-7 py-3 sm:py-3.5 rounded-xl text-xs uppercase tracking-wider transition shrink-0 shadow-md cursor-pointer text-center"
           >
             Contact Media Desk
           </button>

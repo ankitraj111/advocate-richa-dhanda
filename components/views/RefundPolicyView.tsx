@@ -19,64 +19,64 @@ export default function RefundPolicyView({ setActiveView }: RefundPolicyViewProp
           priority
         />
         <div className="absolute inset-0 bg-gradient-to-r from-navy/90 via-navy/70 to-navy/40" />
-        <div className="absolute inset-0 flex flex-col justify-center px-8 lg:px-16 max-w-5xl mx-auto">
+        <div className="absolute inset-0 flex flex-col justify-center px-4 sm:px-6 lg:px-16 max-w-5xl mx-auto">
           <button
             onClick={() => setActiveView("home")}
-            className="flex items-center gap-2 text-white/60 hover:text-gold transition mb-6 text-sm w-fit"
+            className="flex items-center gap-2 text-white/60 hover:text-gold transition mb-4 sm:mb-6 text-sm w-fit"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M19 12H5M12 5l-7 7 7 7" />
             </svg>
             Back to Home
           </button>
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gold/20 border border-gold/30 text-gold text-xs font-bold tracking-widest uppercase mb-4 w-fit">
+          <span className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-full bg-gold/20 border border-gold/30 text-gold text-[10px] sm:text-xs font-bold tracking-widest uppercase mb-3 sm:mb-4 w-fit">
             Legal Document
           </span>
-          <h1 className="font-serif text-4xl lg:text-5xl font-bold text-white mb-2">Refund Policy</h1>
-          <p className="text-white/50 text-sm">Last updated: July 2025</p>
+          <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-2">Refund Policy</h1>
+          <p className="text-white/50 text-xs sm:text-sm">Last updated: July 2025</p>
         </div>
       </div>
 
       {/* Content */}
-      <div className="max-w-5xl mx-auto px-5 lg:px-8 py-16">
+      <div className="max-w-5xl mx-auto px-4 sm:px-5 lg:px-8 py-10 sm:py-16">
 
         {/* Alert Banner */}
-        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 mb-12 flex gap-4 items-start">
-          <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#92400e" strokeWidth="2">
+        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 sm:p-6 mb-8 sm:mb-12 flex gap-3 sm:gap-4 items-start">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#92400e" strokeWidth="2">
               <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
             </svg>
           </div>
-          <p className="text-amber-800 text-sm leading-relaxed font-medium">
+          <p className="text-amber-800 text-xs sm:text-sm leading-relaxed font-medium">
             Please read this policy carefully before booking a consultation or engaging our services. By making a payment, you acknowledge and agree to the terms outlined below.
           </p>
         </div>
 
         {/* Refund Summary Cards */}
-        <div className="grid md:grid-cols-3 gap-5 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-5 mb-8 sm:mb-12">
           {[
             { emoji: "✅", label: "Full Refund", desc: "Cancellation 48+ hours before appointment" },
             { emoji: "⚡", label: "50% Refund", desc: "Cancellation 24–48 hours before appointment" },
             { emoji: "❌", label: "No Refund", desc: "Less than 24 hours or no-show" },
           ].map((card) => (
-            <div key={card.label} className="bg-white rounded-2xl border border-cream-2 shadow-sm p-6 text-center">
-              <div className="text-3xl mb-3">{card.emoji}</div>
-              <div className="font-serif font-bold text-navy mb-1">{card.label}</div>
+            <div key={card.label} className="bg-white rounded-2xl border border-cream-2 shadow-sm p-5 sm:p-6 text-center">
+              <div className="text-2xl sm:text-3xl mb-2 sm:mb-3">{card.emoji}</div>
+              <div className="font-serif font-bold text-navy text-sm sm:text-base mb-1">{card.label}</div>
               <div className="text-navy/50 text-xs">{card.desc}</div>
             </div>
           ))}
         </div>
 
         {/* Sections */}
-        <div className="space-y-8">
+        <div className="space-y-6 sm:space-y-8">
 
           {/* Section 1 */}
           <div className="bg-white rounded-2xl border border-cream-2 shadow-sm overflow-hidden">
-            <div className="flex items-center gap-4 px-8 py-5 border-b border-cream-2">
-              <span className="font-serif text-2xl font-bold text-gold/30">01</span>
-              <h2 className="font-serif text-xl font-bold text-navy">Consultation Fees</h2>
+            <div className="flex items-center gap-3 sm:gap-4 px-5 sm:px-8 py-4 sm:py-5 border-b border-cream-2">
+              <span className="font-serif text-xl sm:text-2xl font-bold text-gold/30">01</span>
+              <h2 className="font-serif text-lg sm:text-xl font-bold text-navy">Consultation Fees</h2>
             </div>
-            <div className="px-8 py-6 text-navy/70 text-sm leading-relaxed space-y-5">
+            <div className="px-5 sm:px-8 py-5 sm:py-6 text-navy/70 text-xs sm:text-sm leading-relaxed space-y-5">
               <div>
                 <h3 className="font-semibold text-navy mb-3 flex items-center gap-2">
                   <span className="w-5 h-5 rounded-full bg-gold/10 text-gold text-xs flex items-center justify-center font-bold">A</span>

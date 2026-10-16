@@ -99,57 +99,58 @@ export default function ContactView() {
   };
 
   return (
-    <div className="bg-[#fdfbf7] min-h-screen font-sans pb-24">
+    <div className="bg-[#fdfbf7] min-h-screen font-sans pb-16 sm:pb-24">
       {/* Hero Section */}
-      <div className="bg-[#111827] pt-28 pb-32 relative overflow-hidden">
+      <div className="bg-[#111827] pt-20 sm:pt-28 pb-24 sm:pb-32 relative overflow-hidden">
         {/* Subtle abstract pattern */}
         <div className="absolute inset-0 opacity-[0.05]" style={{
           backgroundImage: "linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px)",
           backgroundSize: "64px 64px"
         }}></div>
-        <div className="max-w-7xl mx-auto px-5 lg:px-8 relative z-10 text-center">
-          <h4 className="text-[#a67c00] font-semibold tracking-[0.15em] uppercase text-sm mb-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-5 lg:px-8 relative z-10 text-center">
+          <h4 className="text-[#a67c00] font-semibold tracking-[0.15em] uppercase text-xs sm:text-sm mb-4">
             Contact Our Firm
           </h4>
-          <h1 className="font-serif text-5xl lg:text-7xl font-bold text-white mb-6 leading-tight">
-            Start Your <br/>
+          <h1 className="font-serif text-4xl sm:text-5xl lg:text-7xl font-bold text-white mb-6 leading-tight">
+            Start Your{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#d4af37] via-[#E8C547] to-[#d4af37]">Global Journey</span>
           </h1>
-          <p className="text-white/80 text-xl max-w-2xl mx-auto leading-relaxed font-light">
+          <p className="text-white/80 text-base sm:text-xl max-w-2xl mx-auto leading-relaxed font-light">
             Expert immigration counsel is just a message away. Reach out to discuss your visa, residency, or citizenship goals with Advocate Richa Dhanda.
           </p>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-5 lg:px-8 -mt-20 relative z-20">
-        <div className="grid lg:grid-cols-5 gap-0 bg-white shadow-2xl border border-[#e5e7eb]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-5 lg:px-8 -mt-16 sm:-mt-20 relative z-20">
+        {/* Stacked on mobile, side-by-side on lg */}
+        <div className="grid lg:grid-cols-5 gap-0 bg-white shadow-2xl border border-[#e5e7eb] rounded-lg overflow-hidden">
           
-          {/* Left Column - Contact Info (2 columns) */}
-          <div className="lg:col-span-2 bg-[#fdfbf7] p-10 lg:p-14 border-r border-[#e5e7eb]">
-            <h2 className="font-serif text-3xl font-bold text-[#111827] mb-8">
+          {/* Left Column - Contact Info */}
+          <div className="lg:col-span-2 bg-[#fdfbf7] p-7 sm:p-10 lg:p-14 border-b lg:border-b-0 lg:border-r border-[#e5e7eb]">
+            <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#111827] mb-6 sm:mb-8">
               Get in Touch
             </h2>
             
-            <div className="space-y-10">
+            <div className="space-y-8 sm:space-y-10">
 
               {/* Email */}
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-white flex items-center justify-center text-[#a67c00] border border-[#e5e7eb] shrink-0 shadow-sm">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white flex items-center justify-center text-[#a67c00] border border-[#e5e7eb] shrink-0 shadow-sm rounded">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
                 </div>
                 <div>
-                  <div className="text-sm font-semibold tracking-wider text-[#9ca3af] uppercase mb-1">Email Inquiry</div>
-                  <a href="mailto:Advocatericha29@gmail.com" className="font-serif text-lg text-[#111827] hover:text-[#a67c00] transition-colors break-all">
+                  <div className="text-xs font-semibold tracking-wider text-[#9ca3af] uppercase mb-1">Email Inquiry</div>
+                  <a href="mailto:Advocatericha29@gmail.com" className="font-serif text-base sm:text-lg text-[#111827] hover:text-[#a67c00] transition-colors break-all">
                     Advocatericha29@gmail.com
                   </a>
                 </div>
               </div>
             </div>
 
-            <div className="mt-14 pt-10 border-t border-[#e5e7eb]">
-              <h3 className="font-serif text-xl font-bold text-[#111827] mb-6">
+            <div className="mt-10 sm:mt-14 pt-8 sm:pt-10 border-t border-[#e5e7eb]">
+              <h3 className="font-serif text-lg sm:text-xl font-bold text-[#111827] mb-5 sm:mb-6">
                 Hours of Operation
               </h3>
               <table className="w-full text-sm">
@@ -171,23 +172,23 @@ export default function ContactView() {
             </div>
           </div>
 
-          {/* Right Column - Contact Form (3 columns) */}
-          <div className="lg:col-span-3 p-10 lg:p-14">
-            <h2 className="font-serif text-3xl font-bold text-[#111827] mb-2">
+          {/* Right Column - Contact Form */}
+          <div className="lg:col-span-3 p-7 sm:p-10 lg:p-14">
+            <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#111827] mb-2">
               Send a Message
             </h2>
-            <p className="text-[#6b7280] mb-10">
+            <p className="text-[#6b7280] mb-8 sm:mb-10 text-sm sm:text-base">
               All communications are strictly confidential and protected by attorney-client privilege. We aim to respond to all inquiries within one business day.
             </p>
 
-            <form onSubmit={handleSubmit} className="space-y-6" noValidate>
-              <div className="grid sm:grid-cols-2 gap-6">
+            <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6" noValidate>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6">
                 <div>
                   <label className="block text-xs font-bold tracking-widest uppercase text-[#111827] mb-2">
                     Full Name <span className="text-[#a67c00]">*</span>
                   </label>
                   <input
-                    className={`w-full px-4 py-3 bg-[#f9fafb] border focus:bg-white transition-colors duration-200 focus:outline-none ${
+                    className={`w-full px-4 py-3 bg-[#f9fafb] border focus:bg-white transition-colors duration-200 focus:outline-none rounded ${
                       errors.name ? "border-red-500 focus:border-red-500 ring-1 ring-red-500" : "border-[#e5e7eb] focus:border-[#a67c00] focus:ring-1 focus:ring-[#a67c00]"
                     }`}
                     name="name"
@@ -202,7 +203,7 @@ export default function ContactView() {
                     Phone Number <span className="text-[#a67c00]">*</span>
                   </label>
                   <input
-                    className={`w-full px-4 py-3 bg-[#f9fafb] border focus:bg-white transition-colors duration-200 focus:outline-none ${
+                    className={`w-full px-4 py-3 bg-[#f9fafb] border focus:bg-white transition-colors duration-200 focus:outline-none rounded ${
                       errors.phone ? "border-red-500 focus:border-red-500 ring-1 ring-red-500" : "border-[#e5e7eb] focus:border-[#a67c00] focus:ring-1 focus:ring-[#a67c00]"
                     }`}
                     name="phone"
@@ -214,13 +215,13 @@ export default function ContactView() {
                 </div>
               </div>
 
-              <div className="grid sm:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6">
                 <div>
                   <label className="block text-xs font-bold tracking-widest uppercase text-[#111827] mb-2">
                     Email Address <span className="text-[#a67c00]">*</span>
                   </label>
                   <input
-                    className={`w-full px-4 py-3 bg-[#f9fafb] border focus:bg-white transition-colors duration-200 focus:outline-none ${
+                    className={`w-full px-4 py-3 bg-[#f9fafb] border focus:bg-white transition-colors duration-200 focus:outline-none rounded ${
                       errors.email ? "border-red-500 focus:border-red-500 ring-1 ring-red-500" : "border-[#e5e7eb] focus:border-[#a67c00] focus:ring-1 focus:ring-[#a67c00]"
                     }`}
                     name="email"
@@ -236,7 +237,7 @@ export default function ContactView() {
                     Inquiry Type <span className="text-[#a67c00]">*</span>
                   </label>
                   <select
-                    className={`w-full px-4 py-3 bg-[#f9fafb] border focus:bg-white transition-colors duration-200 focus:outline-none appearance-none ${
+                    className={`w-full px-4 py-3 bg-[#f9fafb] border focus:bg-white transition-colors duration-200 focus:outline-none appearance-none rounded ${
                       errors.service ? "border-red-500 focus:border-red-500 ring-1 ring-red-500" : "border-[#e5e7eb] focus:border-[#a67c00] focus:ring-1 focus:ring-[#a67c00]"
                     }`}
                     name="service"
@@ -244,11 +245,11 @@ export default function ContactView() {
                     onChange={handleChange}
                   >
                     <option value="" disabled>Select Visa/Immigration Service</option>
-                    <option value="Work Visa">Work & Business Visas</option>
-                    <option value="Student Visa">Student Visas & Permits</option>
+                    <option value="Work Visa">Work &amp; Business Visas</option>
+                    <option value="Student Visa">Student Visas &amp; Permits</option>
                     <option value="PR">Permanent Residency (PR)</option>
                     <option value="Family">Family Sponsorship</option>
-                    <option value="Appeals">Visa Refusals & Appeals</option>
+                    <option value="Appeals">Visa Refusals &amp; Appeals</option>
                     <option value="Other">Other Immigration Matter</option>
                   </select>
                   {errors.service && <div className="text-red-500 text-xs mt-2">Selection required</div>}
@@ -260,7 +261,7 @@ export default function ContactView() {
                   Case Details <span className="text-[#a67c00]">*</span>
                 </label>
                 <textarea
-                  className={`w-full px-4 py-3 bg-[#f9fafb] border focus:bg-white transition-colors duration-200 focus:outline-none resize-y min-h-[120px] ${
+                  className={`w-full px-4 py-3 bg-[#f9fafb] border focus:bg-white transition-colors duration-200 focus:outline-none resize-y min-h-[120px] rounded ${
                     errors.message ? "border-red-500 focus:border-red-500 ring-1 ring-red-500" : "border-[#e5e7eb] focus:border-[#a67c00] focus:ring-1 focus:ring-[#a67c00]"
                   }`}
                   name="message"
@@ -271,11 +272,11 @@ export default function ContactView() {
                 {errors.message && <div className="text-red-500 text-xs mt-2">Message cannot be empty</div>}
               </div>
 
-              <div className="pt-4">
+              <div className="pt-2 sm:pt-4">
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className={`w-full sm:w-auto px-10 py-4 text-white font-bold text-sm tracking-widest uppercase transition-colors duration-300 flex items-center justify-center gap-3 ${
+                  className={`w-full sm:w-auto px-8 sm:px-10 py-4 text-white font-bold text-sm tracking-widest uppercase transition-colors duration-300 flex items-center justify-center gap-3 rounded ${
                     isSubmitting ? "bg-gray-400 cursor-not-allowed" : "bg-[#111827] hover:bg-[#a67c00]"
                   }`}
                 >

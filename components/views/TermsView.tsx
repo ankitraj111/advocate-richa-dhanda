@@ -121,50 +121,50 @@ export default function TermsView({ setActiveView }: TermsViewProps) {
           priority
         />
         <div className="absolute inset-0 bg-gradient-to-r from-navy/90 via-navy/70 to-navy/40" />
-        <div className="absolute inset-0 flex flex-col justify-center px-8 lg:px-16 max-w-5xl mx-auto">
+        <div className="absolute inset-0 flex flex-col justify-center px-4 sm:px-6 lg:px-16 max-w-5xl mx-auto">
           <button
             onClick={() => setActiveView("home")}
-            className="flex items-center gap-2 text-white/60 hover:text-gold transition mb-6 text-sm w-fit"
+            className="flex items-center gap-2 text-white/60 hover:text-gold transition mb-4 sm:mb-6 text-sm w-fit"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M19 12H5M12 5l-7 7 7 7" />
             </svg>
             Back to Home
           </button>
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gold/20 border border-gold/30 text-gold text-xs font-bold tracking-widest uppercase mb-4 w-fit">
+          <span className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-full bg-gold/20 border border-gold/30 text-gold text-[10px] sm:text-xs font-bold tracking-widest uppercase mb-3 sm:mb-4 w-fit">
             Legal Document
           </span>
-          <h1 className="font-serif text-4xl lg:text-5xl font-bold text-white mb-2">Terms &amp; Conditions</h1>
-          <p className="text-white/50 text-sm">Last updated: July 2025</p>
+          <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-2">Terms &amp; Conditions</h1>
+          <p className="text-white/50 text-xs sm:text-sm">Last updated: July 2025</p>
         </div>
       </div>
 
       {/* Content */}
-      <div className="max-w-5xl mx-auto px-5 lg:px-8 py-16">
+      <div className="max-w-5xl mx-auto px-4 sm:px-5 lg:px-8 py-10 sm:py-16">
         {/* Quick summary card */}
-        <div className="bg-navy text-white rounded-2xl p-8 mb-12 flex flex-col md:flex-row gap-6 items-start">
-          <div className="w-12 h-12 rounded-full bg-gold/20 flex items-center justify-center shrink-0">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d4af37" strokeWidth="2">
+        <div className="bg-navy text-white rounded-2xl p-5 sm:p-8 mb-8 sm:mb-12 flex flex-col md:flex-row gap-5 sm:gap-6 items-start">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gold/20 flex items-center justify-center shrink-0">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#d4af37" strokeWidth="2">
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10,9 9,9 8,9"/>
             </svg>
           </div>
           <div>
-            <h2 className="font-serif text-lg font-bold mb-2">Please Read Carefully</h2>
-            <p className="text-white/60 text-sm leading-relaxed">
+            <h2 className="font-serif text-base sm:text-lg font-bold mb-2">Please Read Carefully</h2>
+            <p className="text-white/60 text-xs sm:text-sm leading-relaxed">
               By using our website or engaging our services, you agree to these terms. These conditions govern the professional relationship between you and Advocate Richa Dhanda and are designed to ensure clarity, transparency, and mutual respect throughout the legal process.
             </p>
           </div>
         </div>
 
         {/* Sections */}
-        <div className="space-y-8">
+        <div className="space-y-6 sm:space-y-8">
           {sections.map((section) => (
             <div key={section.number} className="bg-white rounded-2xl border border-cream-2 shadow-sm overflow-hidden">
-              <div className="flex items-center gap-4 px-8 py-5 border-b border-cream-2">
-                <span className="font-serif text-2xl font-bold text-gold/30">{section.number}</span>
-                <h2 className="font-serif text-xl font-bold text-navy">{section.title}</h2>
+              <div className="flex items-center gap-3 sm:gap-4 px-5 sm:px-8 py-4 sm:py-5 border-b border-cream-2">
+                <span className="font-serif text-xl sm:text-2xl font-bold text-gold/30">{section.number}</span>
+                <h2 className="font-serif text-lg sm:text-xl font-bold text-navy">{section.title}</h2>
               </div>
-              <div className="px-8 py-6 text-navy/70 text-sm leading-relaxed">
+              <div className="px-5 sm:px-8 py-5 sm:py-6 text-navy/70 text-xs sm:text-sm leading-relaxed">
                 {section.content}
               </div>
             </div>

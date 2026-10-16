@@ -20,14 +20,30 @@ export async function POST(request: Request) {
       );
     }
 
-    // Verify payment status with Cashfree
-    const response = await cashfree.PGFetchOrder(orderId);
-    const orderData = response?.data;
+    // Verify payment status with Cashfree (retry for async payment methods like UPI/NetBanking)
+    let orderData: any = null;
+    const MAX_RETRIES = 3;
+    const RETRY_DELAY_MS = 2000;
+
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+      const response = await cashfree.PGFetchOrder(orderId);
+      orderData = response?.data;
+
+      if (orderData?.order_status === "PAID") break;
+
+      // If still not PAID and we have retries left, wait and try again
+      if (attempt < MAX_RETRIES) {
+        console.log(`[Booking] Payment status is "${orderData?.order_status}" on attempt ${attempt}, retrying in ${RETRY_DELAY_MS}ms...`);
+        await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
+      }
+    }
 
     if (!orderData || orderData.order_status !== "PAID") {
       return NextResponse.json(
         {
-          error: "Payment not completed",
+          error: orderData?.order_status === "ACTIVE"
+            ? "Payment is still processing. Please wait a moment and refresh the page."
+            : "Payment not completed",
           status: orderData?.order_status || "UNKNOWN",
         },
         { status: 400 }

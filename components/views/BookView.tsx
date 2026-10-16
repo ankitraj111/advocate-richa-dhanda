@@ -107,39 +107,59 @@ export default function BookView() {
         if (pending.name) setFormData({ name: pending.name, phone: pending.phone, email: pending.email, service: pending.service, notes: pending.notes || "" });
       } catch { /* sessionStorage parse failed, proceed without */ }
 
-      fetch("/api/booking/verify-payment", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orderId: orderIdParam, bookingDetails: Object.keys(pending).length > 0 ? pending : undefined }),
-      })
-        .then((r) => r.json())
-        .then((data) => {
-          if (data.success) {
-            // Use API response details (from Firestore — most reliable source of truth)
-            const bd = data.bookingDetails;
-            if (bd) {
-              if (bd.date) setSelectedDate(bd.date);
-              if (bd.time) setSelectedSlot(bd.time);
-              setFormData((prev) => ({
-                name: bd.name || prev.name,
-                phone: bd.phone || prev.phone,
-                email: bd.email || prev.email,
-                service: bd.service || prev.service,
-                notes: bd.notes || prev.notes,
-              }));
+      // Auto-retry verification with delay — payment status may not be instant for UPI/NetBanking
+      const verifyWithRetry = async (retries: number, delayMs: number) => {
+        for (let attempt = 1; attempt <= retries; attempt++) {
+          try {
+            const r = await fetch("/api/booking/verify-payment", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ orderId: orderIdParam, bookingDetails: Object.keys(pending).length > 0 ? pending : undefined }),
+            });
+            const data = await r.json();
+            if (data.success) {
+              // Use API response details (from Firestore — most reliable source of truth)
+              const bd = data.bookingDetails;
+              if (bd) {
+                if (bd.date) setSelectedDate(bd.date);
+                if (bd.time) setSelectedSlot(bd.time);
+                setFormData((prev) => ({
+                  name: bd.name || prev.name,
+                  phone: bd.phone || prev.phone,
+                  email: bd.email || prev.email,
+                  service: bd.service || prev.service,
+                  notes: bd.notes || prev.notes,
+                }));
+              }
+              // Clear sessionStorage after successful confirmation
+              try { sessionStorage.removeItem("pendingBooking"); } catch {}
+              setBookingId(data.bookingId || orderIdParam);
+              setBookingConfirmed(true);
+              setStep(5);
+              return; // Success — exit retry loop
             }
-            // Clear sessionStorage after successful confirmation
-            try { sessionStorage.removeItem("pendingBooking"); } catch {}
-            setBookingId(data.bookingId || orderIdParam);
-            setBookingConfirmed(true);
-            setStep(5);
-          } else {
+            // If payment is still ACTIVE/processing and we have retries left, wait and retry
+            if (data.status === "ACTIVE" && attempt < retries) {
+              await new Promise((resolve) => setTimeout(resolve, delayMs));
+              continue;
+            }
+            // Final failure
             setPaymentError(data.error || "Payment verification failed.");
             setStep(3);
+            return;
+          } catch {
+            if (attempt < retries) {
+              await new Promise((resolve) => setTimeout(resolve, delayMs));
+              continue;
+            }
+            setPaymentError("Payment verification failed. Please contact us.");
+            setStep(3);
+            return;
           }
-        })
-        .catch(() => { setPaymentError("Payment verification failed. Please contact us."); setStep(3); })
-        .finally(() => setIsProcessing(false));
+        }
+      };
+
+      verifyWithRetry(3, 3000).finally(() => setIsProcessing(false));
     }
   }, []);
 
@@ -382,26 +402,26 @@ export default function BookView() {
 
       {/* ── PAGE HEADER ───────────────────────────────────────────────────── */}
       <div className="bg-white border-b border-gray-200">
-        <div className="max-w-6xl mx-auto px-4 lg:px-8 py-10 lg:py-14">
-          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 lg:py-14">
+          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5 sm:gap-6">
             <div>
-              <p className="text-[#7a2d2d] text-sm font-semibold uppercase tracking-widest mb-2">
+              <p className="text-[#7a2d2d] text-xs sm:text-sm font-semibold uppercase tracking-widest mb-1.5 sm:mb-2">
                 Legal Consultation
               </p>
-              <h1 className="font-serif text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
+              <h1 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
                 Book Your Consultation
               </h1>
-              <p className="text-gray-500 text-base max-w-lg">
+              <p className="text-gray-500 text-sm sm:text-base max-w-lg">
                 Schedule a private 30-minute session with Advocate Richa Dhanda for personalised immigration and legal guidance.
               </p>
             </div>
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-3 sm:gap-4">
               {[
                 { label: "Licensed Advocate", icon: "⚖️" },
                 { label: "Secure Payment", icon: "🔒" },
                 { label: "Instant Confirmation", icon: "✅" },
               ].map((b) => (
-                <div key={b.label} className="flex items-center gap-2 text-sm text-gray-600">
+                <div key={b.label} className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-gray-600 bg-gray-50 sm:bg-transparent px-2.5 py-1 sm:px-0 sm:py-0 rounded-lg sm:rounded-none">
                   <span>{b.icon}</span>
                   <span className="font-medium">{b.label}</span>
                 </div>
@@ -412,7 +432,7 @@ export default function BookView() {
       </div>
 
       {/* ── MAIN CONTENT ──────────────────────────────────────────────────── */}
-      <div className="max-w-6xl mx-auto px-4 lg:px-8 py-10">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
         <div className="flex flex-col lg:flex-row gap-8 items-start">
 
           {/* ── LEFT SIDEBAR ──────────────────────────────────────────────── */}
@@ -512,7 +532,7 @@ export default function BookView() {
 
               {/* Progress Steps */}
               {step <= 3 && (
-                <div className="px-6 lg:px-8 pt-6 pb-5 border-b border-gray-100">
+                <div className="px-4 sm:px-6 lg:px-8 pt-5 sm:pt-6 pb-4 sm:pb-5 border-b border-gray-100">
                   <div className="flex items-center gap-0">
                     {[
                       { num: 1, label: "Select Date" },
@@ -522,24 +542,24 @@ export default function BookView() {
                       <div key={s.num} className="flex items-center flex-1 last:flex-none">
                         <button onClick={() => { if (s.num < step) setStep(s.num); }}
                           disabled={s.num >= step}
-                          className="flex items-center gap-2 group">
-                          <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
+                          className="flex items-center gap-1.5 sm:gap-2 group">
+                          <div className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
                             step > s.num ? "bg-green-600 text-white"
                             : step === s.num ? "bg-[#7a2d2d] text-white shadow-sm ring-2 ring-[#7a2d2d]/20"
                             : "bg-gray-100 text-gray-400"
                           }`}>
                             {step > s.num ? (
-                              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+                              <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                               </svg>
                             ) : s.num}
                           </div>
-                          <span className={`text-sm font-medium hidden sm:block ${step >= s.num ? "text-gray-900" : "text-gray-400"}`}>
+                          <span className={`text-xs sm:text-sm font-medium ${step >= s.num ? "text-gray-900" : "text-gray-400"}`}>
                             {s.label}
                           </span>
                         </button>
                         {i < 2 && (
-                          <div className="flex-1 mx-3 h-px bg-gray-200">
+                          <div className="flex-1 mx-2 sm:mx-3 h-px bg-gray-200">
                             <div className="h-full bg-[#7a2d2d] transition-all duration-500"
                               style={{ width: step > s.num ? "100%" : "0%" }} />
                           </div>
@@ -550,13 +570,13 @@ export default function BookView() {
                 </div>
               )}
 
-              <div className="p-6 lg:p-8">
+              <div className="p-4 sm:p-6 lg:p-8">
 
                 {/* ── STEP 1: DATE ─────────────────────────────────────── */}
                 {step === 1 && (
                   <div>
-                    <h2 className="font-serif text-xl font-bold text-gray-900 mb-1">Select a Date</h2>
-                    <p className="text-gray-500 text-sm mb-6">
+                    <h2 className="font-serif text-lg sm:text-xl font-bold text-gray-900 mb-1">Select a Date</h2>
+                    <p className="text-gray-500 text-xs sm:text-sm mb-5 sm:mb-6">
                       Available Monday through Saturday. Select your preferred date below.
                     </p>
 
@@ -916,11 +936,23 @@ export default function BookView() {
                 {step === 4 && (
                   <div className="text-center py-12">
                     <div className="w-16 h-16 border-4 border-gray-200 border-t-[#0a1628] rounded-full animate-spin mx-auto mb-6" />
-                    <h2 className="font-serif text-xl font-bold text-gray-900 mb-2">Redirecting to Payment</h2>
-                    <p className="text-gray-500 text-sm mb-1">
-                      Please complete payment of <strong className="text-gray-900">₹499</strong> on the Cashfree secure page.
-                    </p>
-                    <p className="text-gray-400 text-xs mb-6">Do not close or refresh this window.</p>
+                    {typeof window !== "undefined" && new URLSearchParams(window.location.search).get("order_id") ? (
+                      <>
+                        <h2 className="font-serif text-xl font-bold text-gray-900 mb-2">Verifying Your Payment</h2>
+                        <p className="text-gray-500 text-sm mb-1">
+                          We&apos;re confirming your payment of <strong className="text-gray-900">₹499</strong>. This may take a few seconds.
+                        </p>
+                        <p className="text-gray-400 text-xs mb-6">Please do not close or refresh this window.</p>
+                      </>
+                    ) : (
+                      <>
+                        <h2 className="font-serif text-xl font-bold text-gray-900 mb-2">Redirecting to Payment</h2>
+                        <p className="text-gray-500 text-sm mb-1">
+                          Please complete payment of <strong className="text-gray-900">₹499</strong> on the Cashfree secure page.
+                        </p>
+                        <p className="text-gray-400 text-xs mb-6">Do not close or refresh this window.</p>
+                      </>
+                    )}
                     <button onClick={() => { setStep(3); setIsProcessing(false); setPaymentError(""); }}
                       className="text-sm text-[#7a2d2d] font-medium hover:underline">
                       ← Go Back

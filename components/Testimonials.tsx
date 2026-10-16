@@ -90,16 +90,16 @@ export default function Testimonials() {
   };
 
   return (
-    <section className="py-20 lg:py-24 bg-gradient-to-b from-[#FAF9F5] via-[#FFFFFF] to-[#F1F3F5] border-b border-gray-200 relative overflow-hidden">
-      <div className="max-w-7xl mx-auto px-5 lg:px-8 relative z-10">
+    <section className="py-14 sm:py-20 lg:py-24 bg-gradient-to-b from-[#FAF9F5] via-[#FFFFFF] to-[#F1F3F5] border-b border-gray-200 relative overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-5 lg:px-8 relative z-10">
         
         {/* Header */}
-        <div className="flex flex-col md:flex-row items-center justify-between mb-12 gap-6">
+        <div className="flex flex-col md:flex-row items-center justify-between mb-8 sm:mb-12 gap-5 sm:gap-6">
           <div className="text-center md:text-left">
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-100/90 border border-amber-300 text-amber-900 text-xs font-bold uppercase tracking-wider mb-3 shadow-xs">
+            <span className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-full bg-amber-100/90 border border-amber-300 text-amber-900 text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-2.5 sm:mb-3 shadow-xs">
               Verified Client Reviews
             </span>
-            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#0B1426] leading-tight">
+            <h2 className="font-serif text-2xl sm:text-4xl lg:text-5xl font-extrabold text-[#0B1426] leading-tight">
               What Clients Say <span className="text-[#8B1538]">About Our Legal Services</span>
             </h2>
           </div>
@@ -109,7 +109,7 @@ export default function Testimonials() {
             <button
               onClick={handlePrev}
               aria-label="Previous Slide"
-              className="w-11 h-11 rounded-full bg-white border border-gray-300 hover:border-[#8B1538] hover:bg-[#8B1538] text-slate-700 hover:text-white flex items-center justify-center transition-all duration-300 shadow-sm cursor-pointer hover:scale-105"
+              className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white border border-gray-300 hover:border-[#8B1538] hover:bg-[#8B1538] text-slate-700 hover:text-white flex items-center justify-center transition-all duration-300 shadow-sm cursor-pointer hover:scale-105"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
@@ -123,7 +123,7 @@ export default function Testimonials() {
             <button
               onClick={handleNext}
               aria-label="Next Slide"
-              className="w-11 h-11 rounded-full bg-white border border-gray-300 hover:border-[#8B1538] hover:bg-[#8B1538] text-slate-700 hover:text-white flex items-center justify-center transition-all duration-300 shadow-sm cursor-pointer hover:scale-105"
+              className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white border border-gray-300 hover:border-[#8B1538] hover:bg-[#8B1538] text-slate-700 hover:text-white flex items-center justify-center transition-all duration-300 shadow-sm cursor-pointer hover:scale-105"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
@@ -133,11 +133,11 @@ export default function Testimonials() {
         </div>
 
         {/* Render ONLY the 3 active cards for the current slide */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 min-h-[320px]">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8 min-h-[300px]">
           {currentCards.map((t, i) => (
             <div
               key={i}
-              className="bg-white rounded-2xl p-8 border border-gray-200/90 shadow-sm hover:shadow-xl hover:border-[#8B1538]/40 transition-all duration-300 flex flex-col justify-between group"
+              className="bg-white rounded-2xl p-6 sm:p-8 border border-gray-200/90 shadow-sm hover:shadow-xl hover:border-[#8B1538]/40 transition-all duration-300 flex flex-col justify-between group"
             >
               <div>
                 {/* Rating Stars & Quote Icon */}

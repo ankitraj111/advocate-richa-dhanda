@@ -92,11 +92,11 @@ export default function AboutView({ setActiveView }: AboutViewProps = {}) {
       <section className="relative bg-white overflow-hidden border-b border-[#e8e0cc]">
 
 
-        <div className="max-w-7xl mx-auto px-5 lg:px-8 py-20 lg:py-28 relative z-10">
-          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-[#0B1426]/5 border border-[#0B1426]/10 text-[#0B1426] text-sm font-bold tracking-widest uppercase mb-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-5 lg:px-8 py-12 sm:py-20 lg:py-28 relative z-10">
+          <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 rounded-full bg-[#0B1426]/5 border border-[#0B1426]/10 text-[#0B1426] text-xs sm:text-sm font-bold tracking-widest uppercase mb-5 sm:mb-6">
             About the Immigration Expert
           </div>
-          <h1 className="font-serif text-4xl lg:text-6xl font-bold text-[#0B1426] mt-3 max-w-4xl leading-tight">
+          <h1 className="font-serif text-3xl sm:text-4xl lg:text-6xl font-bold text-[#0B1426] mt-3 max-w-4xl leading-tight">
             Your Trusted Guide to{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#d4af37] to-[#b8962e]">
               Global Immigration
@@ -111,12 +111,12 @@ export default function AboutView({ setActiveView }: AboutViewProps = {}) {
       </section>
 
       {/* Main About Content — White Background */}
-      <section className="bg-white py-16 lg:py-24">
-        <div className="max-w-7xl mx-auto px-5 lg:px-8">
-          <div className="grid lg:grid-cols-12 gap-12 lg:gap-16">
-            {/* Photo Column */}
-            <div className="lg:col-span-5">
-              <div className="sticky top-28">
+      <section className="bg-white py-10 sm:py-16 lg:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-5 lg:px-8">
+          <div className="grid lg:grid-cols-12 gap-8 sm:gap-12 lg:gap-16">
+            {/* Photo Column — shown after content on mobile */}
+            <div className="lg:col-span-5 order-2 lg:order-1">
+              <div className="lg:sticky lg:top-28">
                 {/* Photo Card */}
                 <div className="relative group">
                   {/* Gold border glow */}
@@ -128,7 +128,7 @@ export default function AboutView({ setActiveView }: AboutViewProps = {}) {
                       alt="Advocate Richa Dhandha — High Court & Immigration Lawyer"
                       width={800}
                       height={520}
-                      className="w-full h-[480px] object-cover brightness-[1.12] contrast-[1.06] saturate-[1.06] group-hover:scale-[1.02] transition-all duration-700"
+                      className="w-full h-[280px] sm:h-[380px] lg:h-[480px] object-cover brightness-[1.12] contrast-[1.06] saturate-[1.06] group-hover:scale-[1.02] transition-all duration-700"
                     />
                   </div>
                 </div>
@@ -177,10 +177,10 @@ export default function AboutView({ setActiveView }: AboutViewProps = {}) {
               </div>
             </div>
 
-            {/* Content Column */}
-            <div className="lg:col-span-7">
+            {/* Content Column — first on mobile */}
+            <div className="lg:col-span-7 order-1 lg:order-2">
               {/* Bio */}
-              <p className="text-lg text-[#2C2C2C] leading-relaxed">
+              <p className="text-base sm:text-lg text-[#2C2C2C] leading-relaxed">
                 I am Advocate Richa Dhandha, an expert immigration lawyer enrolled with the
                 Bar Council of Punjab & Haryana (Registration No. PH/1260/2025). With a
                 Master of Laws (LL.M) degree from Kurukshetra University in First Division,
