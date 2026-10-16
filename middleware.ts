@@ -1,26 +1,54 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-// Allowed origins for CORS
-const ALLOWED_ORIGINS = [
-  "https://advocate-richa-dhanda.vercel.app",
-  "https://advocaterichadhanda.com",
-  "https://www.advocaterichadhanda.com",
-  "http://localhost:3000",
-];
+// Helper to validate whether an origin is allowed
+function isAllowedOrigin(origin: string, host: string | null): boolean {
+  if (!origin) return true; // Direct/server-to-server or no-origin requests are allowed
+
+  // Clean trailing slash
+  const cleanOrigin = origin.trim().replace(/\/+$/, "");
+
+  // Always allow if origin matches the current request host (same origin)
+  if (host) {
+    const cleanHost = host.trim().toLowerCase();
+    if (
+      cleanOrigin === `https://${cleanHost}` ||
+      cleanOrigin === `http://${cleanHost}`
+    ) {
+      return true;
+    }
+  }
+
+  // Allow advocaterichadhanda.com and any subdomain (*.advocaterichadhanda.com)
+  if (/^https?:\/\/([a-zA-Z0-9-]+\.)*advocaterichadhanda\.com$/i.test(cleanOrigin)) {
+    return true;
+  }
+
+  // Allow any Vercel domain (*.vercel.app)
+  if (/^https?:\/\/([a-zA-Z0-9-]+\.)*vercel\.app$/i.test(cleanOrigin)) {
+    return true;
+  }
+
+  // Allow localhost and local loopback with any port
+  if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(cleanOrigin)) {
+    return true;
+  }
+
+  return false;
+}
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const origin = request.headers.get("origin") || "";
+  const host = request.headers.get("host") || "";
 
   // CORS Protection for API routes
   if (pathname.startsWith("/api/")) {
-    // Webhook endpoints receive server-to-server calls from payment gateways
-    // (e.g. Cashfree) — these have non-browser origins and must be allowed through
     const isWebhook = pathname.startsWith("/api/webhook/");
+    const allowed = isWebhook || isAllowedOrigin(origin, host);
 
-    // Block requests from unauthorized origins (skip for webhooks)
-    if (!isWebhook && origin && !ALLOWED_ORIGINS.includes(origin)) {
+    // Block requests from unauthorized external origins
+    if (!allowed) {
       return NextResponse.json(
         { error: "Forbidden: Origin not allowed" },
         { status: 403 }
@@ -30,20 +58,22 @@ export function middleware(request: NextRequest) {
     // Handle preflight OPTIONS requests
     if (request.method === "OPTIONS") {
       const response = new NextResponse(null, { status: 204 });
-      response.headers.set("Access-Control-Allow-Origin", origin || ALLOWED_ORIGINS[0]);
+      if (origin) {
+        response.headers.set("Access-Control-Allow-Origin", origin);
+      }
       response.headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-      response.headers.set("Access-Control-Allow-Headers", "Content-Type");
+      response.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization, x-requested-with");
       response.headers.set("Access-Control-Max-Age", "86400");
       return response;
     }
 
     // Add CORS headers to API responses
     const response = NextResponse.next();
-    if (ALLOWED_ORIGINS.includes(origin)) {
+    if (origin && allowed) {
       response.headers.set("Access-Control-Allow-Origin", origin);
     }
     response.headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-    response.headers.set("Access-Control-Allow-Headers", "Content-Type");
+    response.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization, x-requested-with");
 
     return response;
   }
