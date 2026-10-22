@@ -166,7 +166,22 @@ export default function BookView() {
   // Parse "YYYY-MM-DD" as LOCAL date (not UTC) to avoid timezone shift
   const parseLocalDate = (d: string) => { const [y, m, day] = d.split("-").map(Number); return new Date(y, m - 1, day); };
   const isSunday = (d: string) => parseLocalDate(d).getDay() === 0;
-  const nextMonth = () => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1));
+
+  // Maximum date allowed for consultation booking: 10 November 2026
+  const MAX_BOOKING_DATE = new Date(2026, 10, 10); // Month 10 = November
+
+  const isNextMonthDisabled = () => {
+    return (
+      currentMonth.getFullYear() > MAX_BOOKING_DATE.getFullYear() ||
+      (currentMonth.getFullYear() === MAX_BOOKING_DATE.getFullYear() &&
+        currentMonth.getMonth() >= MAX_BOOKING_DATE.getMonth())
+    );
+  };
+
+  const nextMonth = () => {
+    if (isNextMonthDisabled()) return;
+    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1));
+  };
   const prevMonth = () => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1));
 
   const generateCalendarDays = () => {
@@ -197,10 +212,8 @@ export default function BookView() {
     // Past dates (before today) are not selectable
     if (targetDate.getTime() < today.getTime()) return false;
 
-    // Max 30 days in advance
-    const maxDate = new Date(today);
-    maxDate.setDate(today.getDate() + 30);
-    if (targetDate.getTime() > maxDate.getTime()) return false;
+    // Bookings allowed up to 10 November 2026
+    if (targetDate.getTime() > MAX_BOOKING_DATE.getTime()) return false;
 
     // If it's today, check if business hours are already over
     if (targetDate.getTime() === today.getTime()) {
@@ -616,8 +629,15 @@ export default function BookView() {
                         <span className="font-semibold text-gray-900">
                           {currentMonth.toLocaleString("default", { month: "long", year: "numeric" })}
                         </span>
-                        <button onClick={nextMonth}
-                          className="p-1.5 rounded-lg hover:bg-gray-200 transition-colors text-gray-600">
+                        <button
+                          onClick={nextMonth}
+                          disabled={isNextMonthDisabled()}
+                          className={`p-1.5 rounded-lg transition-colors ${
+                            isNextMonthDisabled()
+                              ? "text-gray-300 cursor-not-allowed opacity-50"
+                              : "hover:bg-gray-200 text-gray-600 cursor-pointer"
+                          }`}
+                        >
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M9 19l7-7-7-7" />
                           </svg>

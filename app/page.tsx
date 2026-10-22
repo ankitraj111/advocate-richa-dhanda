@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import WhyChoose from "@/components/WhyChoose";
@@ -65,7 +65,7 @@ function ServicesPreview({ setActiveView }: { setActiveView: (v: string) => void
                 {service.features.map((feature, i) => (
                   <li key={i} className="flex items-center gap-2.5 text-slate-600 text-sm">
                     <svg className="w-4 h-4 text-[#D4AF37] shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
                     {feature}
                   </li>
@@ -96,6 +96,22 @@ function ServicesPreview({ setActiveView }: { setActiveView: (v: string) => void
 
 export default function Home() {
   const [activeView, setActiveView] = useState("home");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const view = params.get("view");
+      const article = params.get("article");
+      if (article || view === "blog") {
+        setActiveView("blog");
+      } else if (
+        view &&
+        ["home", "about", "services", "media", "faq", "contact", "privacy", "terms", "refund"].includes(view)
+      ) {
+        setActiveView(view);
+      }
+    }
+  }, []);
 
   const handleViewChange = (view: string) => {
     if (view === "book") {

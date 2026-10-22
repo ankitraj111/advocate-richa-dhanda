@@ -35,6 +35,14 @@ export async function GET(request: Request) {
   const date = new Date(year, month - 1, day);
   const dayOfWeek = date.getDay();
 
+  // Consultation booking is only available up to 10 November 2026
+  if (dateStr > "2026-11-10") {
+    return NextResponse.json(
+      { slots: [], message: "Bookings are only available up to 10 November 2026" },
+      { headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" } }
+    );
+  }
+
   // Check if it's a business day
   if (!BUSINESS_HOURS[dayOfWeek]) {
     return NextResponse.json(

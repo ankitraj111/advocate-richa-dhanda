@@ -26,6 +26,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
+    // Limit booking up to 10 November 2026
+    if (date > "2026-11-10") {
+      return NextResponse.json(
+        { error: "Bookings are only available up to 10 November 2026." },
+        { status: 400 }
+      );
+    }
+
     // Backend duplicate-booking guard: verify slot is not already confirmed in Firestore
     if (db) {
       try {

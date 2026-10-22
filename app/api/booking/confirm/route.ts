@@ -35,6 +35,14 @@ export async function POST(req: Request) {
       );
     }
 
+    // Limit booking up to 10 November 2026
+    if (bookingDetails.date > "2026-11-10") {
+      return NextResponse.json(
+        { error: "Bookings are only available up to 10 November 2026." },
+        { status: 400 }
+      );
+    }
+
     let bookingId = "BOOK" + Date.now();
 
     // Save booking to Firebase
