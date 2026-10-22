@@ -35,18 +35,29 @@ export async function GET(request: Request) {
   const date = new Date(year, month - 1, day);
   const dayOfWeek = date.getDay();
 
-  // Consultation booking is only available up to 10 November 2026
-  if (dateStr > "2026-11-10") {
-    return NextResponse.json(
-      { slots: [], message: "Bookings are only available up to 10 November 2026" },
-      { headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" } }
-    );
-  }
-
   // Check if it's a business day
   if (!BUSINESS_HOURS[dayOfWeek]) {
     return NextResponse.json(
       { slots: [], message: "Office is closed on this day" },
+      { headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" } }
+    );
+  }
+
+  // All slots up to 10 November 2026 are shown as booked; active slots start from 11 November 2026
+  if (dateStr <= "2026-11-10") {
+    const endHour = dayOfWeek === 6 ? 14 : 18;
+    const bookedSlots = [];
+    for (let h = 10; h < endHour; h++) {
+      for (let m = 0; m < 60; m += 30) {
+        const dh = h > 12 ? h - 12 : h;
+        bookedSlots.push({
+          time: `${dh}:${m.toString().padStart(2, "0")} ${h >= 12 ? "PM" : "AM"}`,
+          available: false,
+        });
+      }
+    }
+    return NextResponse.json(
+      { slots: bookedSlots, message: "All slots up to 10 November 2026 are fully booked" },
       { headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" } }
     );
   }

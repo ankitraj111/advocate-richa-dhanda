@@ -167,15 +167,18 @@ export default function BookView() {
   const parseLocalDate = (d: string) => { const [y, m, day] = d.split("-").map(Number); return new Date(y, m - 1, day); };
   const isSunday = (d: string) => parseLocalDate(d).getDay() === 0;
 
-  // Maximum date allowed for consultation booking: 10 November 2026
-  const MAX_BOOKING_DATE = new Date(2026, 10, 10); // Month 10 = November
+  // Dates up to 10 November 2026 are shown as booked; active dates start from 11 November 2026
+  const BOOKED_UNTIL_DATE = "2026-11-10";
+
+  const isDateBooked = (dateStr: string) => {
+    return dateStr <= BOOKED_UNTIL_DATE;
+  };
 
   const isNextMonthDisabled = () => {
-    return (
-      currentMonth.getFullYear() > MAX_BOOKING_DATE.getFullYear() ||
-      (currentMonth.getFullYear() === MAX_BOOKING_DATE.getFullYear() &&
-        currentMonth.getMonth() >= MAX_BOOKING_DATE.getMonth())
-    );
+    const now = new Date();
+    // Allow viewing up to 3 months ahead
+    const maxMonth = new Date(now.getFullYear(), now.getMonth() + 3, 1);
+    return currentMonth.getTime() >= maxMonth.getTime();
   };
 
   const nextMonth = () => {
@@ -212,20 +215,10 @@ export default function BookView() {
     // Past dates (before today) are not selectable
     if (targetDate.getTime() < today.getTime()) return false;
 
-    // Bookings allowed up to 10 November 2026
-    if (targetDate.getTime() > MAX_BOOKING_DATE.getTime()) return false;
-
-    // If it's today, check if business hours are already over
-    if (targetDate.getTime() === today.getTime()) {
-      const dayOfWeek = today.getDay();
-      const closingHour = dayOfWeek === 6 ? 14 : 18; // Sat 2PM, Mon-Fri 6PM
-      const currentHour = now.getHours();
-      const currentMin = now.getMinutes();
-      // If current time is past closing hour minus 30 mins, no slots left for today
-      if (currentHour > closingHour || (currentHour === closingHour - 1 && currentMin > 30) || (currentHour === closingHour && currentMin >= 0)) {
-        return false;
-      }
-    }
+    // Allow selecting up to 60 days in advance
+    const maxDate = new Date(today);
+    maxDate.setDate(today.getDate() + 60);
+    if (targetDate.getTime() > maxDate.getTime()) return false;
 
     return true;
   };
@@ -238,6 +231,7 @@ export default function BookView() {
     const endHour = day === 6 ? 14 : 18;
     const now = new Date();
     const isToday = now.getFullYear() === sy && now.getMonth() === sm - 1 && now.getDate() === sd;
+    const isBooked = isDateBooked(dateStr);
     const result: SlotData[] = [];
     for (let h = 10; h < endHour; h++) {
       for (let m = 0; m < 60; m += 30) {
@@ -246,7 +240,7 @@ export default function BookView() {
         const isPast = isToday && slotDateTime.getTime() <= now.getTime() + 15 * 60 * 1000;
         result.push({
           time: `${dh}:${m.toString().padStart(2, "0")} ${h >= 12 ? "PM" : "AM"}`,
-          available: !isPast,
+          available: !isBooked && !isPast,
         });
       }
     }
@@ -262,6 +256,11 @@ export default function BookView() {
     const isToday = now.getFullYear() === sy && now.getMonth() === sm - 1 && now.getDate() === sd;
 
     // Fast background sync to update with any confirmed bookings without freezing the screen
+    if (isDateBooked(selectedDate)) {
+      setSlots(getDefaultSlotsForDate(selectedDate));
+      return;
+    }
+
     fetch(`/api/booking/available-slots?date=${selectedDate}`)
       .then((r) => r.json())
       .then((data) => {
@@ -606,9 +605,17 @@ export default function BookView() {
                 {step === 1 && (
                   <div>
                     <h2 className="font-serif text-lg sm:text-xl font-bold text-gray-900 mb-1">Select a Date</h2>
-                    <p className="text-gray-500 text-xs sm:text-sm mb-5 sm:mb-6">
+                    <p className="text-gray-500 text-xs sm:text-sm mb-4">
                       Available Monday through Saturday. Select your preferred date below.
                     </p>
+
+                    {/* Notice Banner */}
+                    <div className="mb-4 p-3.5 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/90 rounded-xl text-xs sm:text-sm text-amber-950 flex items-center gap-2.5 shadow-xs">
+                      <span className="text-base shrink-0">📌</span>
+                      <span>
+                        <strong>10 नवंबर 2026 तक सभी स्लॉट्स बुक हैं (Booked)।</strong> 11 नवंबर 2026 से आगे के सभी स्लॉट्स बुकिंग के लिए <strong>Active (उपलब्ध)</strong> हैं।
+                      </span>
+                    </div>
 
                     {/* Calendar */}
                     <div className="border border-gray-200 rounded-xl overflow-hidden">
@@ -661,30 +668,66 @@ export default function BookView() {
                             const isSelected = selectedDate === dateStr;
                             const isToday = new Date().toDateString() === date.toDateString();
                             const isSun = date.getDay() === 0;
+                            const isBooked = isDateBooked(dateStr);
                             return (
                               <button key={i} disabled={!selectable} onClick={() => handleDateSelect(dateStr)}
                                 className={`
-                                  h-9 w-full rounded-lg text-sm font-medium transition-colors
-                                  ${isSelected ? "bg-[#7a2d2d] text-white font-semibold shadow-sm" : ""}
-                                  ${!isSelected && selectable ? "hover:bg-gray-100 text-gray-700 cursor-pointer" : ""}
-                                  ${!selectable ? "text-gray-300 cursor-not-allowed" : ""}
-                                  ${isSun ? "!text-red-300 cursor-not-allowed" : ""}
-                                  ${isToday && !isSelected ? "ring-1 ring-[#7a2d2d] text-[#7a2d2d] font-semibold" : ""}
+                                  h-11 w-full rounded-lg text-xs sm:text-sm font-medium transition-all flex flex-col items-center justify-center relative
+                                  ${isSelected ? "!bg-[#7a2d2d] !text-white font-semibold shadow-sm" : ""}
+                                  ${!isSelected && selectable && !isBooked ? "hover:bg-emerald-50 text-gray-800 border border-emerald-100 hover:border-emerald-300 cursor-pointer" : ""}
+                                  ${!isSelected && selectable && isBooked ? "hover:bg-amber-50 text-gray-700 border border-amber-100 hover:border-amber-300 cursor-pointer" : ""}
+                                  ${!selectable ? "text-gray-300 cursor-not-allowed opacity-40" : ""}
+                                  ${isSun ? "!text-red-300 cursor-not-allowed opacity-40" : ""}
+                                  ${isToday && !isSelected ? "ring-2 ring-[#7a2d2d] text-[#7a2d2d] font-bold" : ""}
                                 `}>
-                                {date.getDate()}
+                                <span className="leading-tight font-medium">{date.getDate()}</span>
+                                {selectable && !isSun && (
+                                  <span
+                                    className={`text-[8.5px] sm:text-[9px] font-semibold leading-none mt-0.5 ${
+                                      isSelected
+                                        ? "text-white/90"
+                                        : isBooked
+                                        ? "text-amber-700"
+                                        : "text-emerald-600"
+                                    }`}
+                                  >
+                                    {isBooked ? "Booked" : "Active"}
+                                  </span>
+                                )}
                               </button>
                             );
                           })}
                         </div>
                       </div>
+
+                      {/* Legend */}
+                      <div className="flex items-center justify-center gap-6 px-4 py-3 bg-gray-50 border-t border-gray-100 text-xs text-gray-600">
+                        <div className="flex items-center gap-1.5">
+                          <span className="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span>
+                          <span className="font-medium text-amber-900">10 Nov तक: Booked</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>
+                          <span className="font-medium text-emerald-800">11 Nov से: Active (उपलब्ध)</span>
+                        </div>
+                      </div>
                     </div>
 
                     {selectedDate && (
-                      <div className="mt-4 flex items-center gap-2 p-3.5 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800">
-                        <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
-                        </svg>
-                        <span>Selected: <strong>{formatDate(selectedDate)}</strong></span>
+                      <div className="mt-4 flex items-center justify-between p-3.5 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800">
+                        <div className="flex items-center gap-2">
+                          <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
+                          </svg>
+                          <span>Selected: <strong>{formatDate(selectedDate)}</strong></span>
+                        </div>
+                        <span className={`text-xs px-2.5 py-1 rounded-full font-semibold ${
+                          isDateBooked(selectedDate)
+                            ? "bg-amber-100 text-amber-800 border border-amber-300"
+                            : "bg-emerald-100 text-emerald-800 border border-emerald-300"
+                        }`}>
+                          {isDateBooked(selectedDate) ? "Booked" : "Active (Available)"}
+                        </span>
                       </div>
                     )}
                   </div>
@@ -693,7 +736,7 @@ export default function BookView() {
                 {/* ── STEP 2: TIME SLOTS ──────────────────────────────── */}
                 {step === 2 && (
                   <div>
-                    <div className="flex items-start justify-between mb-5">
+                    <div className="flex items-start justify-between mb-4">
                       <div>
                         <h2 className="font-serif text-xl font-bold text-gray-900 mb-1">Select a Time Slot</h2>
                         <p className="text-gray-500 text-sm">{formatDate(selectedDate)} &bull; {getDayInfo(selectedDate)}</p>
@@ -703,9 +746,33 @@ export default function BookView() {
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
                         </svg>
-                        Change
+                        Change Date
                       </button>
                     </div>
+
+                    {/* Notice if viewing a booked date */}
+                    {isDateBooked(selectedDate) && (
+                      <div className="mb-5 p-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 text-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+                        <div>
+                          <p className="font-semibold text-amber-950 flex items-center gap-1.5">
+                            <span>⚠️</span> 10 नवंबर 2026 तक सभी स्लॉट्स बुक हैं (Booked)
+                          </p>
+                          <p className="text-xs text-amber-800 mt-0.5">
+                            इस तारीख के सभी स्लॉट बुक हो चुके हैं। नए अपॉइंटमेंट <strong>11 नवंबर 2026</strong> से एक्टिव हैं।
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            handleDateSelect("2026-11-11");
+                            setCurrentMonth(new Date(2026, 10, 1));
+                          }}
+                          className="px-3.5 py-1.5 bg-[#7a2d2d] text-white text-xs font-semibold rounded-lg hover:bg-[#5a1d1d] transition-colors shrink-0 whitespace-nowrap cursor-pointer shadow-xs"
+                        >
+                          11 Nov के एक्टिव स्लॉट्स देखें →
+                        </button>
+                      </div>
+                    )}
 
                     {loadingSlots ? (
                       <div className="flex items-center justify-center py-16 gap-3">
@@ -736,14 +803,23 @@ export default function BookView() {
                               {group.slots.map((slot) => (
                                 <button key={slot.time} disabled={!slot.available}
                                   onClick={() => handleSlotSelect(slot.time)}
-                                  className={`py-2.5 px-2 rounded-lg text-sm font-medium transition-colors border ${
+                                  className={`py-2 px-2 rounded-lg text-xs sm:text-sm font-medium transition-colors border flex flex-col items-center justify-center ${
                                     selectedSlot === slot.time
                                       ? "bg-[#7a2d2d] text-white border-[#7a2d2d]"
                                       : slot.available
-                                      ? "border-gray-200 text-gray-700 hover:border-[#7a2d2d] hover:text-[#7a2d2d] bg-white"
-                                      : "border-gray-100 text-gray-300 cursor-not-allowed line-through bg-gray-50"
+                                      ? "border-emerald-200 text-gray-800 hover:border-[#7a2d2d] hover:text-[#7a2d2d] bg-white shadow-xs cursor-pointer"
+                                      : "border-gray-200 text-gray-400 cursor-not-allowed line-through bg-gray-50"
                                   }`}>
-                                  {slot.time}
+                                  <span>{slot.time}</span>
+                                  <span className={`text-[9.5px] mt-0.5 no-underline ${
+                                    selectedSlot === slot.time
+                                      ? "text-white/90"
+                                      : slot.available
+                                      ? "text-emerald-600 font-semibold"
+                                      : "text-gray-400"
+                                  }`}>
+                                    {slot.available ? "Active" : "Booked"}
+                                  </span>
                                 </button>
                               ))}
                             </div>

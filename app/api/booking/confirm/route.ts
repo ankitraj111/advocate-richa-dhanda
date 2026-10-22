@@ -35,10 +35,10 @@ export async function POST(req: Request) {
       );
     }
 
-    // Limit booking up to 10 November 2026
-    if (bookingDetails.date > "2026-11-10") {
+    // Slots up to 10 November 2026 are fully booked; new bookings accepted from 11 November 2026
+    if (bookingDetails.date <= "2026-11-10") {
       return NextResponse.json(
-        { error: "Bookings are only available up to 10 November 2026." },
+        { error: "Slots until 10 November 2026 are fully booked. Please choose a date from 11 November 2026 onwards." },
         { status: 400 }
       );
     }
