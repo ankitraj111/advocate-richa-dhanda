@@ -57,7 +57,7 @@ export const metadata: Metadata = {
     locale: "en_IN",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "/og-image.svg",
         width: 1200,
         height: 630,
         alt: "Advocate Richa Dhanda — Immigration Lawyer Kurukshetra",
@@ -69,7 +69,7 @@ export const metadata: Metadata = {
     title: "Advocate Richa Dhanda — Immigration Lawyer | Kurukshetra",
     description:
       "Expert immigration legal representation. Visa, PR, citizenship & work permits in Kurukshetra, Haryana.",
-    images: ["/og-image.jpg"],
+    images: ["/og-image.svg"],
   },
   robots: {
     index: true,

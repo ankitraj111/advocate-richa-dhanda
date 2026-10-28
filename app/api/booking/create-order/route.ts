@@ -6,15 +6,8 @@ export const dynamic = "force-dynamic";
 
 const CONSULTATION_FEE = 499; // ₹499
 
-const FALLBACK_APP_ID = typeof window === "undefined"
-  ? Buffer.from("MTM1NjIyNDI5NzJlZmUyMWZmZTU3MGY3ZWM5NDIyNjUzMQ==", "base64").toString("utf-8")
-  : "";
-const FALLBACK_SECRET = typeof window === "undefined"
-  ? Buffer.from("Y2Zza19tYV9wcm9kX2JmYzZlODhkY2JmMGE1MmRkYTAzMTRmMWM3MmNiMjFiX2YzMmZiOGRm", "base64").toString("utf-8")
-  : "";
-
-const CASHFREE_APP_ID     = process.env.CASHFREE_APP_ID     || FALLBACK_APP_ID;
-const CASHFREE_SECRET_KEY = process.env.CASHFREE_SECRET_KEY || FALLBACK_SECRET;
+const CASHFREE_APP_ID     = process.env.CASHFREE_APP_ID || "";
+const CASHFREE_SECRET_KEY = process.env.CASHFREE_SECRET_KEY || "";
 const BASE_URL            = process.env.NEXT_PUBLIC_BASE_URL || "https://advocate-richa-dhanda.vercel.app";
 
 export async function POST(request: Request) {

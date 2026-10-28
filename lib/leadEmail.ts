@@ -18,11 +18,6 @@ export interface LeadEmailPayload {
 
 const RECIPIENT_EMAIL = "Advocatericha29@gmail.com";
 
-const FALLBACK_KEY = Buffer.from(
-  "cmVfTUJtdUdveWlfNWVGTFBFdTlIamhGUTNqN0JEOWdWTUJk",
-  "base64"
-).toString("utf-8");
-
 export interface LeadEmailResult {
   success: boolean;
   deliveryMethod?: string;
@@ -127,7 +122,7 @@ export async function sendLeadNotification(payload: LeadEmailPayload): Promise<L
   let emailId = "";
 
   const envKey = (process.env.RESEND_API_KEY || "").trim();
-  const apiKey = envKey.startsWith("re_") ? envKey : FALLBACK_KEY;
+  const apiKey = envKey.startsWith("re_") ? envKey : "";
 
   // 1. Primary Delivery via Resend
   if (apiKey) {

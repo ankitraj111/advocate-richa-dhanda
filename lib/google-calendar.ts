@@ -108,6 +108,12 @@ function generateAllSlots(date: Date): { time: string; hour: number; minute: num
   return slots;
 }
 
+// IST is UTC + 5:30 (330 minutes)
+function istToDate(year: number, month: number, day: number, hour: number, minute: number): Date {
+  const utcMillis = Date.UTC(year, month - 1, day, hour, minute, 0) - (5 * 60 + 30) * 60 * 1000;
+  return new Date(utcMillis);
+}
+
 // Get available slots for a date (check Google Calendar for conflicts & real-time past slots)
 export async function getAvailableSlots(dateStr: string) {
   const [year, month, day] = dateStr.split("-").map(Number);
@@ -124,17 +130,16 @@ export async function getAvailableSlots(dateStr: string) {
   if (!calendar) {
     // If no calendar connected, return slots checking real-time validity (past slots disabled)
     return allSlots.map((s) => {
-      // Create slot time in IST
-      const slotTimeMs = new Date(Date.UTC(year, month - 1, day, s.hour - 5, s.minute - 30, 0)).getTime();
+      const slotTimeMs = istToDate(year, month, day, s.hour, s.minute).getTime();
       const isPast = slotTimeMs <= minValidTime;
       return { time: s.time, available: !isPast };
     });
   }
 
   try {
-    // Set timezone to IST
-    const startOfDay = new Date(Date.UTC(year, month - 1, day, 0 - 5, 0 - 30, 0));
-    const endOfDay = new Date(Date.UTC(year, month - 1, day, 23 - 5, 59 - 30, 59, 999));
+    // Set timezone to IST full day range
+    const startOfDay = istToDate(year, month, day, 0, 0);
+    const endOfDay = new Date(istToDate(year, month, day, 23, 59).getTime() + 59999);
 
     const response = await calendar.freebusy.query({
       requestBody: {
@@ -148,9 +153,8 @@ export async function getAvailableSlots(dateStr: string) {
     const busySlots = response.data.calendars?.primary?.busy || [];
 
     return allSlots.map((slot) => {
-      const slotStart = new Date(Date.UTC(year, month - 1, day, slot.hour - 5, slot.minute - 30, 0));
-      const slotEnd = new Date(slotStart);
-      slotEnd.setMinutes(slotEnd.getMinutes() + SLOT_DURATION_MINUTES);
+      const slotStart = istToDate(year, month, day, slot.hour, slot.minute);
+      const slotEnd = new Date(slotStart.getTime() + SLOT_DURATION_MINUTES * 60 * 1000);
 
       const isPast = slotStart.getTime() <= minValidTime;
 
@@ -165,7 +169,7 @@ export async function getAvailableSlots(dateStr: string) {
   } catch {
     // If Calendar API fails, return all valid non-past slots
     return allSlots.map((s) => {
-      const slotTimeMs = new Date(Date.UTC(year, month - 1, day, s.hour - 5, s.minute - 30, 0)).getTime();
+      const slotTimeMs = istToDate(year, month, day, s.hour, s.minute).getTime();
       const isPast = slotTimeMs <= minValidTime;
       return { time: s.time, available: !isPast };
     });
@@ -196,10 +200,9 @@ export async function createCalendarEvent(booking: {
   if (ampm === "PM" && hour !== 12) hour += 12;
   if (ampm === "AM" && hour === 12) hour = 0;
 
-  const startDate = new Date(booking.date);
-  startDate.setHours(hour, minute, 0, 0);
-  const endDate = new Date(startDate);
-  endDate.setMinutes(endDate.getMinutes() + SLOT_DURATION_MINUTES);
+  const [year, month, day] = booking.date.split("-").map(Number);
+  const startDate = istToDate(year, month, day, hour, minute);
+  const endDate = new Date(startDate.getTime() + SLOT_DURATION_MINUTES * 60 * 1000);
 
   try {
     const event = await calendar.events.insert({

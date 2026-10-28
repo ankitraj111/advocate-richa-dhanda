@@ -661,7 +661,7 @@ export default function BookView() {
                         </div>
                         <div className="grid grid-cols-7 gap-1">
                           {generateCalendarDays().map((date, i) => {
-                            if (!date) return <div key={`e-${i}`} />;
+                            if (!date) return <div key={`empty-${currentMonth.getFullYear()}-${currentMonth.getMonth()}-${i}`} />;
                             const selectable = isDateSelectable(date);
                             // Build YYYY-MM-DD from local date components (not UTC, avoids 1-day shift in IST)
                             const dateStr = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`;
@@ -670,25 +670,29 @@ export default function BookView() {
                             const isSun = date.getDay() === 0;
                             const isBooked = isDateBooked(dateStr);
                             return (
-                              <button key={i} disabled={!selectable} onClick={() => handleDateSelect(dateStr)}
+                              <button
+                                key={dateStr}
+                                disabled={!selectable}
+                                onClick={() => handleDateSelect(dateStr)}
                                 className={`
-                                  h-11 w-full rounded-lg text-xs sm:text-sm font-medium transition-all flex flex-col items-center justify-center relative
+                                  min-h-[52px] h-[52px] w-full rounded-lg text-xs sm:text-sm font-medium transition-all flex flex-col items-center justify-center p-1 relative
                                   ${isSelected ? "!bg-[#7a2d2d] !text-white font-semibold shadow-sm" : ""}
-                                  ${!isSelected && selectable && !isBooked ? "hover:bg-emerald-50 text-gray-800 border border-emerald-100 hover:border-emerald-300 cursor-pointer" : ""}
-                                  ${!isSelected && selectable && isBooked ? "hover:bg-amber-50 text-gray-700 border border-amber-100 hover:border-amber-300 cursor-pointer" : ""}
-                                  ${!selectable ? "text-gray-300 cursor-not-allowed opacity-40" : ""}
-                                  ${isSun ? "!text-red-300 cursor-not-allowed opacity-40" : ""}
+                                  ${!isSelected && selectable && !isBooked ? "hover:bg-emerald-50 text-gray-800 border border-emerald-200 hover:border-emerald-300 cursor-pointer" : ""}
+                                  ${!isSelected && selectable && isBooked ? "hover:bg-amber-50 text-gray-700 border border-amber-200 hover:border-amber-300 cursor-pointer" : ""}
+                                  ${!selectable ? "text-gray-300 cursor-not-allowed opacity-40 border border-transparent" : ""}
+                                  ${isSun ? "!text-red-300 cursor-not-allowed opacity-40 border border-transparent" : ""}
                                   ${isToday && !isSelected ? "ring-2 ring-[#7a2d2d] text-[#7a2d2d] font-bold" : ""}
-                                `}>
+                                `}
+                              >
                                 <span className="leading-tight font-medium">{date.getDate()}</span>
                                 {selectable && !isSun && (
                                   <span
-                                    className={`text-[8.5px] sm:text-[9px] font-semibold leading-none mt-0.5 ${
+                                    className={`text-[8.5px] font-semibold leading-none px-1.5 py-0.5 rounded mt-1 ${
                                       isSelected
-                                        ? "text-white/90"
+                                        ? "bg-white/20 text-white"
                                         : isBooked
-                                        ? "text-amber-700"
-                                        : "text-emerald-600"
+                                        ? "bg-amber-100 text-amber-800"
+                                        : "bg-emerald-100 text-emerald-800"
                                     }`}
                                   >
                                     {isBooked ? "Booked" : "Active"}
