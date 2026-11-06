@@ -48,7 +48,7 @@ export const BLOG_POSTS: BlogPost[] = [
       "Planning to work or study abroad from Haryana or Punjab? Here is an authoritative legal guide detailing 7 dangerous agent red flags, Section 40 misrepresentation risks, and authentic sponsor verification checklists.",
     date: "06 Nov 2026",
     readTime: "6 min read",
-    img: "https://images.unsplash.com/photo-1581553673739-c4906b5d0de8?auto=format&fit=crop&w=1200&q=80",
+    img: "https://images.unsplash.com/photo-1569154941061-e231b4725ef1?auto=format&fit=crop&w=1200&q=80",
     tags: [
       "Visa Scams Prevention",
       "Fake Visa Agents",
