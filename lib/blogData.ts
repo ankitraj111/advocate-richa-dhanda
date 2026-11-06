@@ -109,6 +109,13 @@ export const BLOG_POSTS: BlogPost[] = [
           "Advocate Richa personally reviews visa dossiers, employer certifications, and refusal notices to ensure full compliance with international immigration standards.",
         ],
       },
+      {
+        heading: "5. Legal Consultation & Due Diligence Assistance",
+        paragraphs: [
+          "Before transferring funds or signing international recruitment contracts, have your papers independently evaluated to avoid Section 40 bans, fraudulent offer letters, and severe financial losses.",
+          "For direct legal consultation and confidential case evaluation, contact Advocate Richa at Advocatericha29@gmail.com or call +91 88003 29904.",
+        ],
+      },
     ],
     faqs: [
       {

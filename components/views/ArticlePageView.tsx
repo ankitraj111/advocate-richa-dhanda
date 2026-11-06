@@ -69,6 +69,12 @@ export default function ArticlePageView({
               <span>Share</span>
             </button>
             <a
+              href="mailto:Advocatericha29@gmail.com"
+              className="hidden sm:inline-flex items-center gap-1.5 bg-gray-100 hover:bg-gray-200 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-lg transition"
+            >
+              ✉ Advocatericha29@gmail.com
+            </a>
+            <a
               href="/book"
               className="inline-flex items-center gap-1.5 bg-[#8B1538] hover:bg-[#70102d] text-white text-xs font-bold px-4 py-1.5 rounded-lg transition shadow-xs"
             >
@@ -328,12 +334,20 @@ export default function ArticlePageView({
           <p className="text-amber-100/90 text-sm sm:text-base max-w-xl mx-auto mb-6 leading-relaxed">
             Protect your future and savings. Get your foreign job offer, LMIA, or employment contract verified by Advocate Dr. Richa Dhanda.
           </p>
-          <a
-            href="/book"
-            className="inline-flex items-center gap-2 bg-white text-[#8B1538] hover:bg-amber-50 px-8 py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider shadow-lg hover:scale-105 transition"
-          >
-            Schedule Consultation Now →
-          </a>
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            <a
+              href="/book"
+              className="inline-flex items-center gap-2 bg-white text-[#8B1538] hover:bg-amber-50 px-8 py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider shadow-lg hover:scale-105 transition"
+            >
+              Schedule Consultation Now →
+            </a>
+            <a
+              href="mailto:Advocatericha29@gmail.com"
+              className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/30 text-white px-6 py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider transition"
+            >
+              ✉ Advocatericha29@gmail.com
+            </a>
+          </div>
         </div>
 
         {/* Related Articles Section */}
