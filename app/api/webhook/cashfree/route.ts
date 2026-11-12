@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { cashfree } from "@/lib/cashfree";
+import { createCalendarEvent } from "@/lib/google-calendar";
 import { db } from "@/lib/firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
@@ -49,6 +50,7 @@ export async function POST(request: Request) {
       const customerPhone = data?.customer_details?.customer_phone;
 
       // Look up booking details from Firestore to get slot date and time
+      let bookingDocId: string | null = null;
       let bookingDate = "";
       let bookingTime = "";
       let bookingService = "Legal Consultation";
@@ -56,6 +58,8 @@ export async function POST(request: Request) {
       let clientName = customerName || "Online Client";
       let clientPhone = customerPhone || "";
       let clientEmail = customerEmail || "";
+      let existingCalendarEventId: string | null = null;
+      let alreadyEmailSent = false;
 
       if (db && orderId) {
         try {
@@ -64,6 +68,7 @@ export async function POST(request: Request) {
           const snap = await getDocs(q);
           if (!snap.empty) {
             const bData = snap.docs[0].data();
+            bookingDocId = snap.docs[0].id;
             clientName = bData.name || clientName;
             clientEmail = bData.email || clientEmail;
             clientPhone = bData.phone || clientPhone;
@@ -71,14 +76,16 @@ export async function POST(request: Request) {
             bookingTime = bData.time || "";
             bookingService = bData.service || bookingService;
             bookingNotes = bData.notes || "";
+            existingCalendarEventId = bData.calendarEventId || null;
+            alreadyEmailSent = Boolean(bData.emailSent);
 
             // Mark confirmed in Firestore
-            await updateDoc(doc(db, "bookings", snap.docs[0].id), {
+            await updateDoc(doc(db, "bookings", bookingDocId), {
               status: "confirmed",
               paymentAmount: paymentAmount,
               paymentStatus: "PAID",
-              paymentGateway: "cashfree_webhook",
-              confirmedAt: serverTimestamp(),
+              paymentGateway: bData.paymentGateway || "cashfree_webhook",
+              confirmedAt: bData.confirmedAt || serverTimestamp(),
             });
           }
         } catch (lookupErr) {
@@ -86,25 +93,56 @@ export async function POST(request: Request) {
         }
       }
 
-      // Trigger lead email notification
-      try {
-        const { sendLeadNotification } = await import("@/lib/leadEmail");
-        await sendLeadNotification({
-          name: clientName,
-          email: clientEmail,
-          phone: clientPhone,
-          service: bookingService,
-          consultationDate: bookingDate,
-          consultationTime: bookingTime,
-          notes: bookingNotes,
-          paymentAmount: paymentAmount,
-          orderId: orderId,
-          bookingType: true,
-          message: `Payment of ₹${paymentAmount} verified via Cashfree (Order: ${orderId}). ${bookingNotes}`,
-        });
-        console.log(`[Webhook] Lead email notification sent for Order ${orderId}`);
-      } catch (webhookEmailErr) {
-        console.warn("[Webhook] Email notification warning:", webhookEmailErr);
+      // Create Google Calendar event if not already created
+      if (!existingCalendarEventId && bookingDate && bookingTime) {
+        try {
+          const event = await createCalendarEvent({
+            name: clientName,
+            email: clientEmail,
+            phone: clientPhone,
+            service: bookingService,
+            date: bookingDate,
+            time: bookingTime,
+            notes: bookingNotes,
+          });
+          if (event?.id && db && bookingDocId) {
+            const { updateDoc, doc } = await import("firebase/firestore");
+            await updateDoc(doc(db, "bookings", bookingDocId), {
+              calendarEventId: event.id,
+            }).catch((e) => console.warn("[Webhook] Failed to store calendarEventId:", e));
+          }
+        } catch (calErr) {
+          console.warn("[Webhook] Calendar event creation warning:", calErr);
+        }
+      }
+
+      // Trigger lead email notification if not already sent
+      if (!alreadyEmailSent) {
+        try {
+          const { sendLeadNotification } = await import("@/lib/leadEmail");
+          await sendLeadNotification({
+            name: clientName,
+            email: clientEmail,
+            phone: clientPhone,
+            service: bookingService,
+            consultationDate: bookingDate,
+            consultationTime: bookingTime,
+            notes: bookingNotes,
+            paymentAmount: paymentAmount,
+            orderId: orderId,
+            bookingType: true,
+            message: `Payment of ₹${paymentAmount} verified via Cashfree (Order: ${orderId}). ${bookingNotes}`,
+          });
+          if (db && bookingDocId) {
+            const { updateDoc, doc } = await import("firebase/firestore");
+            await updateDoc(doc(db, "bookings", bookingDocId), {
+              emailSent: true,
+            }).catch(() => {});
+          }
+          console.log(`[Webhook] Lead email notification sent for Order ${orderId}`);
+        } catch (webhookEmailErr) {
+          console.warn("[Webhook] Email notification warning:", webhookEmailErr);
+        }
       }
 
       // Save webhook payment log to Firebase

@@ -1,13 +1,15 @@
 import { NextResponse } from "next/server";
-import { getAvailableSlots, BUSINESS_HOURS } from "@/lib/google-calendar";
+import {
+  BUSINESS_HOURS,
+  generateSlotsForYMD,
+  getAvailableSlotsDetailed,
+  getDayOfWeekFromDateStr,
+} from "@/lib/google-calendar";
 import { db } from "@/lib/firebase";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { rateLimit } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
-
-// Fast in-memory cache for available slots (TTL: 30 seconds)
-const slotsCache = new Map<string, { slots: any[]; expiresAt: number }>();
 
 export async function GET(request: Request) {
   // Rate Limiting — max 60 requests per IP per minute
@@ -27,83 +29,72 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const dateStr = searchParams.get("date");
 
-  if (!dateStr) {
-    return NextResponse.json({ error: "Date parameter required" }, { status: 400 });
+  if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+    return NextResponse.json({ error: "Valid YYYY-MM-DD date parameter required" }, { status: 400 });
   }
 
   const [year, month, day] = dateStr.split("-").map(Number);
-  const date = new Date(year, month - 1, day);
-  const dayOfWeek = date.getDay();
+  const dayOfWeek = getDayOfWeekFromDateStr(year, month, day);
 
   // Check if it's a business day
   if (!BUSINESS_HOURS[dayOfWeek]) {
     return NextResponse.json(
-      { slots: [], message: "Office is closed on this day" },
-      { headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" } }
+      { slots: [], calendarSynced: true, message: "Office is closed on this day" },
+      { headers: { "Cache-Control": "no-store, max-age=0" } }
     );
   }
 
   // All slots up to 10 November 2026 are shown as booked; active slots start from 11 November 2026
   if (dateStr <= "2026-11-10") {
-    const endHour = dayOfWeek === 6 ? 14 : 18;
-    const bookedSlots = [];
-    for (let h = 10; h < endHour; h++) {
-      for (let m = 0; m < 60; m += 30) {
-        const dh = h > 12 ? h - 12 : h;
-        bookedSlots.push({
-          time: `${dh}:${m.toString().padStart(2, "0")} ${h >= 12 ? "PM" : "AM"}`,
-          available: false,
-        });
-      }
-    }
+    const bookedSlots = generateSlotsForYMD(year, month, day).map((s) => ({
+      time: s.time,
+      available: false,
+    }));
     return NextResponse.json(
-      { slots: bookedSlots, message: "All slots up to 10 November 2026 are fully booked" },
-      { headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" } }
-    );
-  }
-
-  // Check in-memory cache for instant response (1-5ms)
-  const cached = slotsCache.get(dateStr);
-  if (cached && Date.now() < cached.expiresAt) {
-    return NextResponse.json(
-      { slots: cached.slots },
-      { headers: { "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60" } }
+      {
+        slots: bookedSlots,
+        calendarSynced: true,
+        message: "All slots up to 10 November 2026 are fully booked",
+      },
+      { headers: { "Cache-Control": "no-store, max-age=0" } }
     );
   }
 
   try {
-    // Run Google Calendar slots and Firestore bookings check in PARALLEL with timeouts
-    const [calendarSlots, bookedTimes] = await Promise.all([
-      getAvailableSlots(dateStr),
+    // Run Google Calendar slots and Firestore bookings check in parallel
+    const [calendarResult, bookedTimes] = await Promise.all([
+      getAvailableSlotsDetailed(dateStr),
       (async (): Promise<string[]> => {
         if (!db) return [];
         try {
-          const timeoutPromise = new Promise<string[]>((resolve) => setTimeout(() => resolve([]), 1500));
+          const timeoutPromise = new Promise<string[]>((resolve) => setTimeout(() => resolve([]), 3500));
           const fetchPromise = (async () => {
             const bookingsRef = collection(db, "bookings");
-            const q = query(bookingsRef, where("date", "==", dateStr), where("status", "==", "confirmed"));
+            const q = query(bookingsRef, where("date", "==", dateStr));
             const snapshot = await getDocs(q);
-            return snapshot.docs.map((doc) => doc.data().time as string);
+            return snapshot.docs
+              .filter((d) => d.data().status === "confirmed")
+              .map((d) => d.data().time as string);
           })();
           return await Promise.race([fetchPromise, timeoutPromise]);
-        } catch {
+        } catch (err) {
+          console.warn("[AvailableSlots] Firestore lookup failed:", err);
           return [];
         }
       })(),
     ]);
 
-    // Mark booked slots as unavailable
-    const slots = calendarSlots.map((slot) => ({
+    const slots = calendarResult.slots.map((slot) => ({
       ...slot,
       available: slot.available && !bookedTimes.includes(slot.time),
     }));
 
-    // Cache the result for 30 seconds
-    slotsCache.set(dateStr, { slots, expiresAt: Date.now() + 30 * 1000 });
-
     return NextResponse.json(
-      { slots },
-      { headers: { "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60" } }
+      {
+        slots,
+        calendarSynced: calendarResult.calendarSynced,
+      },
+      { headers: { "Cache-Control": "no-store, max-age=0" } }
     );
   } catch (error) {
     console.error("Error fetching slots:", error);

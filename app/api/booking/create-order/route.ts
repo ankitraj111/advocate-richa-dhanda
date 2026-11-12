@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/firebase";
 import { collection, addDoc, serverTimestamp, query, where, getDocs } from "firebase/firestore";
+import { getAvailableSlotsDetailed } from "@/lib/google-calendar";
 
 export const dynamic = "force-dynamic";
 
@@ -27,24 +28,38 @@ export async function POST(request: Request) {
       );
     }
 
-    // Backend duplicate-booking guard: verify slot is not already confirmed in Firestore
-    if (db) {
-      try {
-        const existingQ = query(
-          collection(db, "bookings"),
-          where("date", "==", date),
-          where("time", "==", time),
-          where("status", "==", "confirmed")
-        );
-        const existingSnap = await getDocs(existingQ);
-        if (!existingSnap.empty) {
-          return NextResponse.json(
-            { error: "This slot is already booked. Please choose a different date or time." },
-            { status: 409 }
+    // Backend duplicate-booking guard: verify slot is not already confirmed in Firestore or busy on Google Calendar
+    const [existingInDb, calResult] = await Promise.all([
+      (async () => {
+        if (!db) return false;
+        try {
+          const existingQ = query(collection(db, "bookings"), where("date", "==", date));
+          const existingSnap = await getDocs(existingQ);
+          return existingSnap.docs.some(
+            (d) => d.data().time === time && d.data().status === "confirmed"
           );
+        } catch (dbCheckErr) {
+          console.warn("Slot collision check failed (proceeding with caution):", dbCheckErr);
+          return false;
         }
-      } catch (dbCheckErr) {
-        console.warn("Slot collision check failed (proceeding with caution):", dbCheckErr);
+      })(),
+      getAvailableSlotsDetailed(date).catch(() => null),
+    ]);
+
+    if (existingInDb) {
+      return NextResponse.json(
+        { error: "This slot is already booked. Please choose a different date or time." },
+        { status: 409 }
+      );
+    }
+
+    if (calResult && calResult.slots.length > 0) {
+      const matched = calResult.slots.find((s) => s.time === time);
+      if (matched && !matched.available) {
+        return NextResponse.json(
+          { error: "This time slot is no longer available on the calendar. Please choose another slot." },
+          { status: 409 }
+        );
       }
     }
 

@@ -8,6 +8,12 @@ interface SlotData {
   available: boolean;
 }
 
+interface DayAvailability {
+  availableSlots: number;
+  totalSlots: number;
+  status: "available" | "booked" | "closed";
+}
+
 const SERVICES = [
   {
     value: "Work Visa",
@@ -81,6 +87,9 @@ export default function BookView() {
   const [selectedSlot, setSelectedSlot] = useState("");
   const [slots, setSlots] = useState<SlotData[]>([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
+  const [monthAvailability, setMonthAvailability] = useState<Record<string, DayAvailability>>({});
+  const [loadingMonth, setLoadingMonth] = useState(false);
+  const [slotFetchError, setSlotFetchError] = useState(false);
   const [formData, setFormData] = useState({ name: "", phone: "", email: "", service: "", notes: "" });
   const [errors, setErrors] = useState<Record<string, boolean>>({});
   const [isProcessing, setIsProcessing] = useState(false);
@@ -170,9 +179,65 @@ export default function BookView() {
   // Dates up to 10 November 2026 are shown as booked; active dates start from 11 November 2026
   const BOOKED_UNTIL_DATE = "2026-11-10";
 
-  const isDateBooked = (dateStr: string) => {
+  const formatLocalYMD = (d: Date) =>
+    `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+
+  const [todayStr, setTodayStr] = useState("");
+  useEffect(() => {
+    setTodayStr(formatLocalYMD(new Date()));
+  }, []);
+
+  const showNov10Notice = Boolean(todayStr) && todayStr <= BOOKED_UNTIL_DATE;
+
+  const isHardcodedBookedDate = (dateStr: string) => {
     return dateStr <= BOOKED_UNTIL_DATE;
   };
+
+  const isDateBooked = (dateStr: string) => {
+    if (isHardcodedBookedDate(dateStr)) return true;
+    return monthAvailability[dateStr]?.status === "booked";
+  };
+
+  const getNextActiveDateStr = () => {
+    const effectiveToday = todayStr || formatLocalYMD(new Date());
+    const start = effectiveToday > BOOKED_UNTIL_DATE ? new Date() : new Date(2026, 10, 11);
+    const candidate = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+    for (let i = 0; i < 14; i++) {
+      const ymd = formatLocalYMD(candidate);
+      if (candidate.getDay() !== 0 && !isDateBooked(ymd)) {
+        return ymd;
+      }
+      candidate.setDate(candidate.getDate() + 1);
+    }
+    return "2026-11-11";
+  };
+
+  // Sync month-level availability from Google Calendar + Firestore
+  useEffect(() => {
+    let active = true;
+    const year = currentMonth.getFullYear();
+    const month = String(currentMonth.getMonth() + 1).padStart(2, "0");
+    setLoadingMonth(true);
+
+    fetch(`/api/booking/month-availability?month=${year}-${month}`, { cache: "no-store" })
+      .then((r) => r.json())
+      .then((data) => {
+        if (!active) return;
+        if (data?.days && typeof data.days === "object") {
+          setMonthAvailability((prev) => ({ ...prev, ...data.days }));
+        }
+      })
+      .catch(() => {
+        // Silently keep default date selectability if offline
+      })
+      .finally(() => {
+        if (active) setLoadingMonth(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [currentMonth]);
 
   const isNextMonthDisabled = () => {
     const now = new Date();
@@ -249,21 +314,30 @@ export default function BookView() {
 
   useEffect(() => {
     if (!selectedDate) return;
-    if (isSunday(selectedDate)) { setSlots([]); return; }
+    if (isSunday(selectedDate)) { setSlots([]); setLoadingSlots(false); return; }
 
     const now = new Date();
     const [sy, sm, sd] = selectedDate.split("-").map(Number);
     const isToday = now.getFullYear() === sy && now.getMonth() === sm - 1 && now.getDate() === sd;
 
-    // Fast background sync to update with any confirmed bookings without freezing the screen
-    if (isDateBooked(selectedDate)) {
+    if (isHardcodedBookedDate(selectedDate)) {
       setSlots(getDefaultSlotsForDate(selectedDate));
+      setLoadingSlots(false);
+      setSlotFetchError(false);
       return;
     }
 
-    fetch(`/api/booking/available-slots?date=${selectedDate}`)
-      .then((r) => r.json())
+    let active = true;
+    setLoadingSlots(true);
+    setSlotFetchError(false);
+
+    fetch(`/api/booking/available-slots?date=${selectedDate}`, { cache: "no-store" })
+      .then((r) => {
+        if (!r.ok) throw new Error("Failed to fetch slots");
+        return r.json();
+      })
       .then((data) => {
+        if (!active) return;
         if (data.slots && Array.isArray(data.slots) && data.slots.length > 0) {
           let fetchedSlots: SlotData[] = data.slots;
           if (isToday) {
@@ -284,11 +358,22 @@ export default function BookView() {
             });
           }
           setSlots(fetchedSlots);
+        } else {
+          setSlots(getDefaultSlotsForDate(selectedDate));
         }
       })
       .catch(() => {
-        // Instant fallback already displayed
+        if (!active) return;
+        setSlotFetchError(true);
+        setSlots(getDefaultSlotsForDate(selectedDate));
+      })
+      .finally(() => {
+        if (active) setLoadingSlots(false);
       });
+
+    return () => {
+      active = false;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate]);
 
@@ -307,11 +392,15 @@ export default function BookView() {
   const handleDateSelect = (dateStr: string) => {
     if (isSunday(dateStr)) return;
     setSelectedDate(dateStr);
-    // Render slots immediately (0ms instant display)
-    const instantSlots = getDefaultSlotsForDate(dateStr);
-    setSlots(instantSlots);
-    setLoadingSlots(false);
     setSelectedSlot("");
+    setSlotFetchError(false);
+    if (isHardcodedBookedDate(dateStr)) {
+      setSlots(getDefaultSlotsForDate(dateStr));
+      setLoadingSlots(false);
+    } else {
+      setSlots([]);
+      setLoadingSlots(true);
+    }
     setStep(2);
   };
   const handleSlotSelect = (time: string) => { setSelectedSlot(time); setStep(3); };
@@ -609,13 +698,15 @@ export default function BookView() {
                       Available Monday through Saturday. Select your preferred date below.
                     </p>
 
-                    {/* Notice Banner */}
-                    <div className="mb-4 p-3.5 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/90 rounded-xl text-xs sm:text-sm text-amber-950 flex items-center gap-2.5 shadow-xs">
-                      <span className="text-base shrink-0">📌</span>
-                      <span>
-                        <strong>10 नवंबर 2026 तक सभी स्लॉट्स बुक हैं (Booked)।</strong> 11 नवंबर 2026 से आगे के सभी स्लॉट्स बुकिंग के लिए <strong>Active (उपलब्ध)</strong> हैं।
-                      </span>
-                    </div>
+                    {/* Notice Banner (shown only while 10 Nov restriction is active) */}
+                    {showNov10Notice && (
+                      <div className="mb-4 p-3.5 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/90 rounded-xl text-xs sm:text-sm text-amber-950 flex items-center gap-2.5 shadow-xs">
+                        <span className="text-base shrink-0">📌</span>
+                        <span>
+                          <strong>10 नवंबर 2026 तक सभी स्लॉट्स बुक हैं (Booked)।</strong> 11 नवंबर 2026 से आगे के सभी स्लॉट्स बुकिंग के लिए <strong>Active (उपलब्ध)</strong> हैं।
+                        </span>
+                      </div>
+                    )}
 
                     {/* Calendar */}
                     <div className="border border-gray-200 rounded-xl overflow-hidden">
@@ -708,12 +799,19 @@ export default function BookView() {
                       <div className="flex items-center justify-center gap-6 px-4 py-3 bg-gray-50 border-t border-gray-100 text-xs text-gray-600">
                         <div className="flex items-center gap-1.5">
                           <span className="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span>
-                          <span className="font-medium text-amber-900">10 Nov तक: Booked</span>
+                          <span className="font-medium text-amber-900">
+                            {showNov10Notice ? "10 Nov तक: Booked" : "Booked"}
+                          </span>
                         </div>
                         <div className="flex items-center gap-1.5">
                           <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>
-                          <span className="font-medium text-emerald-800">11 Nov से: Active (उपलब्ध)</span>
+                          <span className="font-medium text-emerald-800">
+                            {showNov10Notice ? "11 Nov से: Active (उपलब्ध)" : "Active (उपलब्ध)"}
+                          </span>
                         </div>
+                        {loadingMonth && (
+                          <span className="text-[11px] text-gray-400">Syncing...</span>
+                        )}
                       </div>
                     </div>
 
@@ -755,7 +853,7 @@ export default function BookView() {
                     </div>
 
                     {/* Notice if viewing a booked date */}
-                    {isDateBooked(selectedDate) && (
+                    {isHardcodedBookedDate(selectedDate) ? (
                       <div className="mb-5 p-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 text-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
                         <div>
                           <p className="font-semibold text-amber-950 flex items-center gap-1.5">
@@ -768,13 +866,37 @@ export default function BookView() {
                         <button
                           type="button"
                           onClick={() => {
-                            handleDateSelect("2026-11-11");
-                            setCurrentMonth(new Date(2026, 10, 1));
+                            const nextActive = getNextActiveDateStr();
+                            const [ny, nm] = nextActive.split("-").map(Number);
+                            setCurrentMonth(new Date(ny, nm - 1, 1));
+                            handleDateSelect(nextActive);
                           }}
                           className="px-3.5 py-1.5 bg-[#7a2d2d] text-white text-xs font-semibold rounded-lg hover:bg-[#5a1d1d] transition-colors shrink-0 whitespace-nowrap cursor-pointer shadow-xs"
                         >
-                          11 Nov के एक्टिव स्लॉट्स देखें →
+                          उपलब्ध स्लॉट्स देखें →
                         </button>
+                      </div>
+                    ) : !loadingSlots && slots.length > 0 && slots.every((s) => !s.available) ? (
+                      <div className="mb-5 p-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 text-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+                        <div>
+                          <p className="font-semibold text-amber-950">All slots on this date are booked</p>
+                          <p className="text-xs text-amber-800 mt-0.5">
+                            Please choose another date from the calendar to view available time slots.
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setStep(1)}
+                          className="px-3.5 py-1.5 bg-[#7a2d2d] text-white text-xs font-semibold rounded-lg hover:bg-[#5a1d1d] transition-colors shrink-0 whitespace-nowrap cursor-pointer shadow-xs"
+                        >
+                          Change Date
+                        </button>
+                      </div>
+                    ) : null}
+
+                    {slotFetchError && (
+                      <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-800">
+                        Live calendar sync took longer than expected. Showing standard hours — availability will be verified before payment.
                       </div>
                     )}
 

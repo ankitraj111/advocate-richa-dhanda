@@ -3,44 +3,90 @@ import { db } from "./firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 
 const SCOPES = ["https://www.googleapis.com/auth/calendar"];
+const DEFAULT_BASE_URL = "https://www.advocaterichadhanda.com";
+const SLOT_DURATION_MINUTES = 30;
+const IST_OFFSET_MS = (5 * 60 + 30) * 60 * 1000;
+
+export interface SlotStatus {
+  time: string;
+  available: boolean;
+}
+
+export interface BusyInterval {
+  start: number;
+  end: number;
+}
+
+// Extract external request origin safely behind reverse proxies (e.g., Vercel)
+export function getRequestOrigin(request: Request): string {
+  const url = new URL(request.url);
+  const proto = request.headers.get("x-forwarded-proto")?.split(",")[0]?.trim() || url.protocol.replace(":", "");
+  const host = request.headers.get("x-forwarded-host")?.split(",")[0]?.trim() || request.headers.get("host") || url.host;
+  return `${proto}://${host}`;
+}
+
+// Resolve OAuth callback redirect URI consistently across environments
+export function getRedirectUri(origin?: string): string {
+  const explicitRedirect = process.env.GOOGLE_REDIRECT_URI?.trim();
+  if (explicitRedirect) {
+    return explicitRedirect;
+  }
+  const base = (
+    origin ||
+    process.env.NEXT_PUBLIC_BASE_URL ||
+    DEFAULT_BASE_URL
+  )
+    .trim()
+    .replace(/\/+$/, "");
+  return `${base}/api/auth/callback/google`;
+}
 
 // Create OAuth2 client
-export function getOAuth2Client() {
+export function getOAuth2Client(origin?: string) {
   return new google.auth.OAuth2(
     process.env.GOOGLE_CLIENT_ID,
     process.env.GOOGLE_CLIENT_SECRET,
-    `${process.env.NEXT_PUBLIC_BASE_URL || "https://advocate-richa-dhanda.vercel.app"}/api/auth/callback/google`
+    getRedirectUri(origin)
   );
 }
 
 // Generate auth URL for initial setup
-export function getAuthUrl() {
-  const oauth2Client = getOAuth2Client();
+export function getAuthUrl(origin?: string) {
+  const oauth2Client = getOAuth2Client(origin);
   return oauth2Client.generateAuthUrl({
     access_type: "offline",
     scope: SCOPES,
     prompt: "consent",
+    include_granted_scopes: true,
   });
-}
-
-// Store refresh token in Firebase
-export async function storeRefreshToken(token: string) {
-  if (db) {
-    await setDoc(doc(db, "settings", "google_calendar"), {
-      refreshToken: token,
-      updatedAt: new Date().toISOString(),
-    });
-  }
 }
 
 let cachedRefreshToken: string | null = null;
 let tokenCacheTime = 0;
 
-// Get refresh token from Firebase with in-memory caching & timeout
+// Store refresh token in Firebase and update in-memory cache immediately
+export async function storeRefreshToken(token: string) {
+  if (!db) {
+    throw new Error("Firestore is not initialized; cannot store Google Calendar refresh token.");
+  }
+  await setDoc(doc(db, "settings", "google_calendar"), {
+    refreshToken: token,
+    updatedAt: new Date().toISOString(),
+  });
+  cachedRefreshToken = token;
+  tokenCacheTime = Date.now();
+}
+
+// Get refresh token from env override or Firebase with in-memory caching & timeout
 export async function getRefreshToken(): Promise<string | null> {
+  const envToken = process.env.GOOGLE_REFRESH_TOKEN?.trim();
+  if (envToken) {
+    return envToken;
+  }
+
   const now = Date.now();
-  // 5-minute memory cache
-  if (cachedRefreshToken !== null && now - tokenCacheTime < 5 * 60 * 1000) {
+  // 5-minute memory cache (only cache valid non-empty tokens)
+  if (cachedRefreshToken && now - tokenCacheTime < 5 * 60 * 1000) {
     return cachedRefreshToken;
   }
 
@@ -48,17 +94,23 @@ export async function getRefreshToken(): Promise<string | null> {
     try {
       const fetchPromise = getDoc(doc(db, "settings", "google_calendar")).then((docSnap) => {
         if (docSnap.exists()) {
-          return (docSnap.data().refreshToken as string) || null;
+          const val = docSnap.data().refreshToken;
+          return typeof val === "string" && val.trim().length > 0 ? val.trim() : null;
         }
         return null;
       });
-      // 1.5s timeout to prevent hanging on Firestore network delay
-      const timeoutPromise = new Promise<null>((resolve) => setTimeout(() => resolve(null), 1500));
+      // 4s timeout to allow Firestore cold starts in serverless environments
+      const timeoutPromise = new Promise<null>((resolve) =>
+        setTimeout(() => resolve(null), 4000)
+      );
       const token = await Promise.race([fetchPromise, timeoutPromise]);
-      cachedRefreshToken = token;
-      tokenCacheTime = now;
+      if (token) {
+        cachedRefreshToken = token;
+        tokenCacheTime = now;
+      }
       return token;
-    } catch {
+    } catch (err) {
+      console.error("[GoogleCalendar] Failed to read refresh token from Firestore:", err);
       return null;
     }
   }
@@ -67,6 +119,10 @@ export async function getRefreshToken(): Promise<string | null> {
 
 // Get authenticated calendar client
 export async function getCalendarClient() {
+  if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+    console.warn("[GoogleCalendar] Missing GOOGLE_CLIENT_ID or GOOGLE_CLIENT_SECRET.");
+    return null;
+  }
   const refreshToken = await getRefreshToken();
   if (!refreshToken) {
     return null;
@@ -76,7 +132,7 @@ export async function getCalendarClient() {
   return google.calendar({ version: "v3", auth: oauth2Client });
 }
 
-// Business hours configuration
+// Business hours configuration (0 = Sunday .. 6 = Saturday)
 export const BUSINESS_HOURS: Record<number, { start: number; end: number } | null> = {
   0: null, // Sunday - closed
   1: { start: 10, end: 18 }, // Monday 10AM-6PM
@@ -87,18 +143,24 @@ export const BUSINESS_HOURS: Record<number, { start: number; end: number } | nul
   6: { start: 10, end: 14 }, // Saturday 10AM-2PM
 };
 
-const SLOT_DURATION_MINUTES = 30;
+// Parse "YYYY-MM-DD" safely without server-timezone shift
+export function getDayOfWeekFromDateStr(year: number, month: number, day: number): number {
+  return new Date(Date.UTC(year, month - 1, day)).getUTCDay();
+}
 
-// Generate all possible slots for a given date
-function generateAllSlots(date: Date): { time: string; hour: number; minute: number }[] {
-  const dayOfWeek = date.getDay();
+// Generate all possible slots for a given date (using UTC day-of-week for timezone independence)
+export function generateSlotsForYMD(
+  year: number,
+  month: number,
+  day: number
+): { time: string; hour: number; minute: number }[] {
+  const dayOfWeek = getDayOfWeekFromDateStr(year, month, day);
   const hours = BUSINESS_HOURS[dayOfWeek];
   if (!hours) return [];
 
   const slots: { time: string; hour: number; minute: number }[] = [];
   for (let h = hours.start; h < hours.end; h++) {
     for (let m = 0; m < 60; m += SLOT_DURATION_MINUTES) {
-      const timeStr = `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}`;
       const displayHour = h > 12 ? h - 12 : h;
       const ampm = h >= 12 ? "PM" : "AM";
       const displayTime = `${displayHour}:${m.toString().padStart(2, "0")} ${ampm}`;
@@ -108,71 +170,203 @@ function generateAllSlots(date: Date): { time: string; hour: number; minute: num
   return slots;
 }
 
-// IST is UTC + 5:30 (330 minutes)
+// Parse "10:30 AM" / "2:00 PM" into 24h { hour, minute }
+export function parseTimeLabel(timeLabel: string): { hour: number; minute: number } | null {
+  const timeParts = timeLabel.match(/(\d+):(\d+)\s*(AM|PM)/i);
+  if (!timeParts) return null;
+
+  let hour = parseInt(timeParts[1], 10);
+  const minute = parseInt(timeParts[2], 10);
+  const ampm = timeParts[3].toUpperCase();
+
+  if (ampm === "PM" && hour !== 12) hour += 12;
+  if (ampm === "AM" && hour === 12) hour = 0;
+
+  return { hour, minute };
+}
+
+// Convert IST wall-clock components to a UTC Date
 function istToDate(year: number, month: number, day: number, hour: number, minute: number): Date {
-  const utcMillis = Date.UTC(year, month - 1, day, hour, minute, 0) - (5 * 60 + 30) * 60 * 1000;
+  const utcMillis = Date.UTC(year, month - 1, day, hour, minute, 0) - IST_OFFSET_MS;
   return new Date(utcMillis);
 }
 
-// Get available slots for a date (check Google Calendar for conflicts & real-time past slots)
-export async function getAvailableSlots(dateStr: string) {
-  const [year, month, day] = dateStr.split("-").map(Number);
-  const date = new Date(year, month - 1, day);
-  const allSlots = generateAllSlots(date);
-  if (allSlots.length === 0) return [];
+// Format IST wall-clock components as RFC3339 string with explicit +05:30 offset
+function formatISTDateTime(year: number, month: number, day: number, hour: number, minute: number): string {
+  const y = String(year).padStart(4, "0");
+  const m = String(month).padStart(2, "0");
+  const d = String(day).padStart(2, "0");
+  const hh = String(hour).padStart(2, "0");
+  const mm = String(minute).padStart(2, "0");
+  return `${y}-${m}-${d}T${hh}:${mm}:00+05:30`;
+}
 
-  const now = new Date();
-  // 15-minute buffer so clients cannot book a slot that has already started or is starting immediately
-  const minValidTime = now.getTime() + 15 * 60 * 1000;
-
+// Query Google Calendar FreeBusy API for a given time range
+async function queryFreeBusy(
+  timeMin: Date,
+  timeMax: Date
+): Promise<{ synced: boolean; busy: BusyInterval[]; error?: string }> {
   const calendar = await getCalendarClient();
-
   if (!calendar) {
-    // If no calendar connected, return slots checking real-time validity (past slots disabled)
-    return allSlots.map((s) => {
-      const slotTimeMs = istToDate(year, month, day, s.hour, s.minute).getTime();
-      const isPast = slotTimeMs <= minValidTime;
-      return { time: s.time, available: !isPast };
-    });
+    return { synced: false, busy: [], error: "Google Calendar is not connected." };
   }
 
   try {
-    // Set timezone to IST full day range
-    const startOfDay = istToDate(year, month, day, 0, 0);
-    const endOfDay = new Date(istToDate(year, month, day, 23, 59).getTime() + 59999);
-
     const response = await calendar.freebusy.query({
       requestBody: {
-        timeMin: startOfDay.toISOString(),
-        timeMax: endOfDay.toISOString(),
+        timeMin: timeMin.toISOString(),
+        timeMax: timeMax.toISOString(),
         timeZone: "Asia/Kolkata",
         items: [{ id: "primary" }],
       },
     });
 
-    const busySlots = response.data.calendars?.primary?.busy || [];
+    const primaryCal = response.data.calendars?.primary;
+    if (primaryCal?.errors && primaryCal.errors.length > 0) {
+      const errMsg = primaryCal.errors.map((e) => `${e.domain}:${e.reason}`).join(", ");
+      console.error("[GoogleCalendar] FreeBusy calendar error:", errMsg);
+      return { synced: false, busy: [], error: errMsg };
+    }
 
-    return allSlots.map((slot) => {
-      const slotStart = istToDate(year, month, day, slot.hour, slot.minute);
-      const slotEnd = new Date(slotStart.getTime() + SLOT_DURATION_MINUTES * 60 * 1000);
+    const busy = (primaryCal?.busy || [])
+      .filter((b) => b.start && b.end)
+      .map((b) => ({
+        start: new Date(b.start!).getTime(),
+        end: new Date(b.end!).getTime(),
+      }));
 
-      const isPast = slotStart.getTime() <= minValidTime;
+    return { synced: true, busy };
+  } catch (err: any) {
+    const detail = err?.response?.data?.error_description || err?.response?.data?.error?.message || err?.message || "Unknown Google Calendar error";
+    console.error("[GoogleCalendar] FreeBusy query failed:", detail);
+    // Invalidate token cache on auth failures so next attempt re-reads Firestore
+    if (err?.response?.status === 401 || String(detail).includes("invalid_grant")) {
+      cachedRefreshToken = null;
+      tokenCacheTime = 0;
+    }
+    return { synced: false, busy: [], error: String(detail) };
+  }
+}
 
-      const isBusy = isPast || busySlots.some((busy) => {
-        const busyStart = new Date(busy.start!);
-        const busyEnd = new Date(busy.end!);
-        return slotStart < busyEnd && slotEnd > busyStart;
-      });
+// Evaluate slot availability against minValidTime and busy intervals
+export function evaluateSlotsForDate(
+  year: number,
+  month: number,
+  day: number,
+  busyIntervals: BusyInterval[],
+  minValidTimeMs: number
+): SlotStatus[] {
+  const allSlots = generateSlotsForYMD(year, month, day);
+  return allSlots.map((slot) => {
+    const slotStartMs = istToDate(year, month, day, slot.hour, slot.minute).getTime();
+    const slotEndMs = slotStartMs + SLOT_DURATION_MINUTES * 60 * 1000;
+    const isPast = slotStartMs <= minValidTimeMs;
+    const isBusy =
+      isPast ||
+      busyIntervals.some((busy) => slotStartMs < busy.end && slotEndMs > busy.start);
+    return { time: slot.time, available: !isBusy };
+  });
+}
 
-      return { time: slot.time, available: !isBusy };
-    });
-  } catch {
-    // If Calendar API fails, return all valid non-past slots
-    return allSlots.map((s) => {
-      const slotTimeMs = istToDate(year, month, day, s.hour, s.minute).getTime();
-      const isPast = slotTimeMs <= minValidTime;
-      return { time: s.time, available: !isPast };
-    });
+// Get available slots with sync metadata
+export async function getAvailableSlotsDetailed(dateStr: string): Promise<{
+  slots: SlotStatus[];
+  calendarSynced: boolean;
+  calendarError?: string;
+}> {
+  const [year, month, day] = dateStr.split("-").map(Number);
+  if (!year || !month || !day) {
+    return { slots: [], calendarSynced: false, calendarError: "Invalid date format" };
+  }
+
+  const allSlots = generateSlotsForYMD(year, month, day);
+  if (allSlots.length === 0) {
+    return { slots: [], calendarSynced: true };
+  }
+
+  // 15-minute buffer so clients cannot book a slot that has already started or starts immediately
+  const minValidTimeMs = Date.now() + 15 * 60 * 1000;
+  const startOfDay = istToDate(year, month, day, 0, 0);
+  const endOfDay = new Date(istToDate(year, month, day, 23, 59).getTime() + 59999);
+
+  const { synced, busy, error } = await queryFreeBusy(startOfDay, endOfDay);
+  const slots = evaluateSlotsForDate(year, month, day, busy, minValidTimeMs);
+
+  return {
+    slots,
+    calendarSynced: synced,
+    ...(error ? { calendarError: error } : {}),
+  };
+}
+
+// Backward-compatible wrapper returning SlotStatus[]
+export async function getAvailableSlots(dateStr: string): Promise<SlotStatus[]> {
+  const { slots } = await getAvailableSlotsDetailed(dateStr);
+  return slots;
+}
+
+// Query Google Calendar busy intervals for an entire month in one API call
+export async function getMonthBusyIntervals(year: number, month: number): Promise<{
+  calendarSynced: boolean;
+  busy: BusyInterval[];
+  calendarError?: string;
+}> {
+  const daysInMonth = new Date(Date.UTC(year, month, 0)).getUTCDate();
+  const startOfMonth = istToDate(year, month, 1, 0, 0);
+  const endOfMonth = new Date(istToDate(year, month, daysInMonth, 23, 59).getTime() + 59999);
+
+  const { synced, busy, error } = await queryFreeBusy(startOfMonth, endOfMonth);
+  return {
+    calendarSynced: synced,
+    busy,
+    ...(error ? { calendarError: error } : {}),
+  };
+}
+
+// Check Google Calendar connection status (safe for diagnostic endpoint, returns no secrets)
+export async function getCalendarStatus(origin?: string) {
+  const hasClientId = Boolean(process.env.GOOGLE_CLIENT_ID?.trim());
+  const hasClientSecret = Boolean(process.env.GOOGLE_CLIENT_SECRET?.trim());
+  const envToken = Boolean(process.env.GOOGLE_REFRESH_TOKEN?.trim());
+  const refreshToken = await getRefreshToken();
+
+  const status: {
+    configured: boolean;
+    hasRefreshToken: boolean;
+    tokenSource: "env" | "firestore" | "none";
+    connected: boolean;
+    calendarSummary?: string;
+    redirectUri: string;
+    error?: string;
+  } = {
+    configured: hasClientId && hasClientSecret,
+    hasRefreshToken: Boolean(refreshToken),
+    tokenSource: envToken ? "env" : refreshToken ? "firestore" : "none",
+    connected: false,
+    redirectUri: getRedirectUri(origin),
+  };
+
+  if (!status.configured) {
+    status.error = "GOOGLE_CLIENT_ID or GOOGLE_CLIENT_SECRET is missing in environment variables.";
+    return status;
+  }
+  if (!refreshToken) {
+    status.error = "Google Calendar is not authorized yet. Visit /api/auth/google to connect.";
+    return status;
+  }
+
+  try {
+    const oauth2Client = getOAuth2Client(origin);
+    oauth2Client.setCredentials({ refresh_token: refreshToken });
+    const calendar = google.calendar({ version: "v3", auth: oauth2Client });
+    const calRes = await calendar.calendarList.get({ calendarId: "primary" });
+    status.connected = true;
+    status.calendarSummary = calRes.data.summary || "primary";
+    return status;
+  } catch (err: any) {
+    const detail = err?.response?.data?.error_description || err?.response?.data?.error?.message || err?.message || "Failed to connect to Google Calendar";
+    status.error = String(detail);
+    return status;
   }
 }
 
@@ -187,22 +381,34 @@ export async function createCalendarEvent(booking: {
   notes?: string;
 }) {
   const calendar = await getCalendarClient();
-  if (!calendar) return null;
+  if (!calendar) {
+    console.warn("[GoogleCalendar] Skipping event creation — calendar client unavailable.");
+    return null;
+  }
 
-  // Parse the time string
-  const timeParts = booking.time.match(/(\d+):(\d+)\s*(AM|PM)/i);
-  if (!timeParts) return null;
-
-  let hour = parseInt(timeParts[1]);
-  const minute = parseInt(timeParts[2]);
-  const ampm = timeParts[3].toUpperCase();
-
-  if (ampm === "PM" && hour !== 12) hour += 12;
-  if (ampm === "AM" && hour === 12) hour = 0;
+  const parsedTime = parseTimeLabel(booking.time);
+  if (!parsedTime) {
+    console.error("[GoogleCalendar] Invalid booking time format:", booking.time);
+    return null;
+  }
 
   const [year, month, day] = booking.date.split("-").map(Number);
-  const startDate = istToDate(year, month, day, hour, minute);
-  const endDate = new Date(startDate.getTime() + SLOT_DURATION_MINUTES * 60 * 1000);
+  if (!year || !month || !day) {
+    console.error("[GoogleCalendar] Invalid booking date format:", booking.date);
+    return null;
+  }
+
+  const startDateObj = istToDate(year, month, day, parsedTime.hour, parsedTime.minute);
+  const endDateObj = new Date(startDateObj.getTime() + SLOT_DURATION_MINUTES * 60 * 1000);
+  const endIST = new Date(endDateObj.getTime() + IST_OFFSET_MS);
+  const startDateTime = formatISTDateTime(year, month, day, parsedTime.hour, parsedTime.minute);
+  const endDateTime = formatISTDateTime(
+    endIST.getUTCFullYear(),
+    endIST.getUTCMonth() + 1,
+    endIST.getUTCDate(),
+    endIST.getUTCHours(),
+    endIST.getUTCMinutes()
+  );
 
   try {
     const event = await calendar.events.insert({
@@ -211,11 +417,11 @@ export async function createCalendarEvent(booking: {
         summary: `Consultation - ${booking.name}`,
         description: `Client: ${booking.name}\nPhone: ${booking.phone}\nEmail: ${booking.email}\nService: ${booking.service}\nNotes: ${booking.notes || "N/A"}`,
         start: {
-          dateTime: startDate.toISOString(),
+          dateTime: startDateTime,
           timeZone: "Asia/Kolkata",
         },
         end: {
-          dateTime: endDate.toISOString(),
+          dateTime: endDateTime,
           timeZone: "Asia/Kolkata",
         },
         attendees: booking.email ? [{ email: booking.email }] : [],
@@ -229,8 +435,9 @@ export async function createCalendarEvent(booking: {
       },
     });
     return event.data;
-  } catch {
-    console.error("Failed to create calendar event");
+  } catch (err: any) {
+    const detail = err?.response?.data || err?.message || err;
+    console.error("[GoogleCalendar] Failed to create calendar event:", detail);
     return null;
   }
 }

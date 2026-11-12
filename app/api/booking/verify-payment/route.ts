@@ -54,6 +54,8 @@ export async function POST(request: Request) {
     let bookingDetails = clientBookingDetails || null; // fallback from client sessionStorage
     let bookingDocId: string | null = null;
     let bookingId = "BOOK" + Date.now();
+    let existingCalendarEventId: string | null = null;
+    let alreadyEmailSent = false;
 
     if (db) {
       try {
@@ -69,6 +71,8 @@ export async function POST(request: Request) {
           const dbData = docSnap.data();
           bookingDocId = docSnap.id;
           bookingId = docSnap.id;
+          existingCalendarEventId = dbData.calendarEventId || null;
+          alreadyEmailSent = Boolean(dbData.emailSent);
 
           // Use DB data as the source of truth (most reliable)
           bookingDetails = {
@@ -87,8 +91,8 @@ export async function POST(request: Request) {
             paymentStatus: orderData.order_status,
             cfPaymentId: orderData.cf_order_id,
             status: "confirmed",
-            paymentGateway: "cashfree",
-            confirmedAt: serverTimestamp(),
+            paymentGateway: dbData.paymentGateway || "cashfree",
+            confirmedAt: dbData.confirmedAt || serverTimestamp(),
           });
 
           console.log(`[Booking] Confirmed booking ${bookingDocId} for order ${orderId}`);
@@ -109,6 +113,7 @@ export async function POST(request: Request) {
               createdAt: serverTimestamp(),
               confirmedAt: serverTimestamp(),
             });
+            bookingDocId = bookingRef.id;
             bookingId = bookingRef.id;
           }
         }
@@ -117,9 +122,9 @@ export async function POST(request: Request) {
       }
     }
 
-    // Create Google Calendar event
-    let calendarEventId = null;
-    if (bookingDetails?.date && bookingDetails?.time) {
+    // Create Google Calendar event (only if not already created by webhook or a prior verify call)
+    let calendarEventId = existingCalendarEventId;
+    if (!calendarEventId && bookingDetails?.date && bookingDetails?.time) {
       try {
         const event = await createCalendarEvent({
           name: bookingDetails.name,
@@ -131,13 +136,18 @@ export async function POST(request: Request) {
           notes: bookingDetails.notes,
         });
         calendarEventId = event?.id || null;
+        if (calendarEventId && db && bookingDocId) {
+          await updateDoc(doc(db, "bookings", bookingDocId), {
+            calendarEventId,
+          }).catch((e) => console.warn("Failed to save calendarEventId:", e));
+        }
       } catch (calError) {
         console.warn("Calendar event creation failed:", calError);
       }
     }
 
-    // Send email notifications (advocate + customer) directly in-process
-    if (bookingDetails?.name) {
+    // Send email notifications (advocate + customer) directly in-process if not already sent
+    if (!alreadyEmailSent && bookingDetails?.name) {
       try {
         const { sendLeadNotification } = await import("@/lib/leadEmail");
         await sendLeadNotification({
@@ -152,6 +162,11 @@ export async function POST(request: Request) {
           paymentAmount: orderData.order_amount,
           orderId: orderId,
         });
+        if (db && bookingDocId) {
+          await updateDoc(doc(db, "bookings", bookingDocId), {
+            emailSent: true,
+          }).catch(() => {});
+        }
         console.log(`[Booking] Payment lead notification sent for order ${orderId}`);
       } catch (emailErr) {
         console.warn("[Booking] Payment notification email error:", emailErr);
